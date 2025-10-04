@@ -11,7 +11,7 @@ related:
   - "checkpoint"
 ---
 
-Il **VAE (Variational Autoencoder)** è il decodificatore finale del tuo sistema.
+Il **VAE (Variational Autoencoder)** è il decodificatore finale del tuo sistema. [1, 2]
 
 Immagina che il modello AI non "pensi" con immagini, ma in un linguaggio matematico astratto, uno **spazio latente**. È come un compositore che scrive uno spartito: lo spartito non è musica, sono simboli su un foglio.
 
@@ -19,5 +19,5 @@ Il VAE è l'orchestra che legge quello spartito e lo trasforma nella sinfonia vi
 
 ### A cosa serve concretamente?
 
-- **Da Latenza a Pixel:** La sua funzione primaria è convertire la rappresentazione astratta (tensore latente) generata dal modello in un'immagine reale, con pixel e colori.
+- **Da Latenza a Pixel:** La sua funzione primaria è convertire la rappresentazione astratta (tensore latente) generata dal modello in un'immagine reale, con pixel e colori. [2]
 - **Compressione:** Può anche fare il contrario, comprimendo un'immagine esistente nella sua rappresentazione latente (processo di encoding).

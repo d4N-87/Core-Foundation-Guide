@@ -5,10 +5,19 @@
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<!-- Google Fonts Import -->
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+		<!-- 
+			FIX DEFINITIVO FONT: 
+			Dichiariamo il font qui, nel modo più diretto possibile per il browser.
+			Questo bypassa ogni possibile problema con il processo di build.
+			Assicurati di aver messo il file VT323-Regular.ttf in /static/fonts/
+		-->
+		<style>
+			@font-face {
+				font-family: 'VT323';
+				src: url('/fonts/VT323-Regular.ttf') format('truetype');
+				font-display: swap;
+			}
+		</style>
 
 		%sveltekit.head%
 	</head>

@@ -1,1 +1,22 @@
-@import 'tailwindcss';
+/* src/app.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+  Abbiamo rimosso tutte le classi personalizzate e le variabili.
+  Questo file ora serve solo a importare Tailwind e i font.
+*/
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}

@@ -13,7 +13,6 @@
   {#if data.metadata.sources && data.metadata.sources.length > 0}
     <div class="mt-12 border-t-2 border-green-700 pt-4">
       <h3 class="text-xl uppercase text-green-300 mb-2">Fonti & Risorse</h3>
-      <!-- MODIFICA: Da <ul> a <ol> per avere una lista numerata -->
       <ol class="list-decimal list-inside space-y-1">
         {#each data.metadata.sources as source}
           <li>
