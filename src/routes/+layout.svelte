@@ -1,10 +1,20 @@
+<!-- src/routes/+layout.svelte -->
 <script lang="ts">
   import '../app.css';
-  import NeuralBackground from '$lib/components/NeuralBackground.svelte';
+  // Commentiamo l'import per assicurarci che non venga caricato
+  // import NeuralBackground from '$lib/components/NeuralBackground.svelte';
 </script>
 
-<NeuralBackground />
+<!-- 
+  Abbiamo commentato il componente dello sfondo.
+  Ora non dovrebbe esserci nulla a coprire il nostro contenuto.
+-->
+<!-- <NeuralBackground /> -->
 
-<main class="p-4 md:p-8">
+<!-- 
+  Per questo test, usiamo un main semplice senza classi extra.
+  Lo slot renderizzerà la nostra pagina di test.
+-->
+<main>
   <slot />
 </main>

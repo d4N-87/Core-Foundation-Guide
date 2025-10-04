@@ -1,11 +1,9 @@
 /* src/app.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* 
-  Abbiamo rimosso tutte le classi personalizzate e le variabili.
-  Questo file ora serve solo a importare Tailwind e i font.
+  Questa è la nuova e unica direttiva necessaria per Tailwind v4.
+  Le definizioni dei font rimangono valide.
 */
 
 @font-face {

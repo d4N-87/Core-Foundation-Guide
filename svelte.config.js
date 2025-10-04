@@ -1,4 +1,7 @@
+// svelte.config.js
 import adapter from '@sveltejs/adapter-auto';
+// CORREZIONE: Importiamo vitePreprocess dal nuovo percorso
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { mdsvex } from 'mdsvex';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -6,8 +9,9 @@ const config = {
 	extensions: ['.svelte', '.md'],
 
 	preprocess: [
+		vitePreprocess(),
 		mdsvex({
-			extensions: ['.md'],
+			extensions: ['.md']
 		})
 	],
 
