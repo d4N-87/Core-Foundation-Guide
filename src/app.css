@@ -1,11 +1,13 @@
 /* src/app.css */
 @import "tailwindcss";
 
-/* 
-  Questa è la nuova e unica direttiva necessaria per Tailwind v4.
-  Le definizioni dei font rimangono valide.
-*/
+body {
+  background-color: #0a0a0a;
+  /* Applichiamo qui gli stili di base per il testo */
+  @apply text-white min-h-screen font-['Inter'];
+}
 
+/* ... il resto del file con i @font-face ... */
 @font-face {
   font-family: 'Inter';
   src: url('/fonts/Inter-Regular.ttf') format('truetype');

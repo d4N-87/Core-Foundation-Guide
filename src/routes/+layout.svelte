@@ -1,20 +1,24 @@
 <!-- src/routes/+layout.svelte -->
 <script lang="ts">
+  import { browser } from '$app/environment';
   import '../app.css';
-  // Commentiamo l'import per assicurarci che non venga caricato
-  // import NeuralBackground from '$lib/components/NeuralBackground.svelte';
+  import NeuralBackground from '$lib/components/NeuralBackground.svelte';
 </script>
 
-<!-- 
-  Abbiamo commentato il componente dello sfondo.
-  Ora non dovrebbe esserci nulla a coprire il nostro contenuto.
--->
-<!-- <NeuralBackground /> -->
+{#if browser}
+  <NeuralBackground />
+{/if}
 
 <!-- 
-  Per questo test, usiamo un main semplice senza classi extra.
-  Lo slot renderizzerà la nostra pagina di test.
+  Il tag <main> ora è solo un contenitore strutturale.
+  'relative' e 'z-10' sono ancora necessari per posizionarlo sopra lo sfondo.
 -->
-<main>
-  <slot />
+<main class="relative z-10 isolate">
+  <!-- 
+    Spostiamo il padding e gli stili visivi su un div interno.
+    Questo div conterrà tutto il contenuto visibile delle pagine.
+  -->
+  <div class="p-4 md:p-8">
+    <slot />
+  </div>
 </main>
