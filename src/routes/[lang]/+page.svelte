@@ -5,12 +5,10 @@
 	import { fade } from 'svelte/transition';
 	import { translations } from '$lib/translations';
 	import { onMount, afterUpdate } from 'svelte';
-	// L'import statico di GSAP è stato RIMOSSO da qui
 
 	export let data: PageData;
 	const t = translations[data.lang as keyof typeof translations] || translations.it;
 
-	// Definiamo una variabile per mantenere l'istanza di GSAP una volta caricata
 	let gsap: typeof import('gsap').gsap;
 
 	let activeConnectors: {
@@ -20,12 +18,68 @@
 	}[] = [];
 	let gridContainer: HTMLElement;
 
-	// onMount viene eseguito SOLO nel browser.
-	// Qui importiamo GSAP e lo salviamo nella nostra variabile.
 	onMount(async () => {
 		const gsapModule = await import('gsap');
 		gsap = gsapModule.gsap;
 	});
+
+	function handleMouseEnter(event: MouseEvent, slug: string) {
+		showConnections(slug);
+
+		if (!gsap || !gridContainer) return;
+
+		const target = event.currentTarget as HTMLElement;
+		const cards = gridContainer.querySelectorAll('.card-container');
+		const targetRect = target.getBoundingClientRect();
+
+		gsap.to(target, {
+			scale: 1.05,
+			duration: 0.4,
+			ease: 'power3.out'
+		});
+
+		cards.forEach((card) => {
+			if (card === target) return;
+
+			const otherRect = card.getBoundingClientRect();
+
+			const dx = otherRect.left + otherRect.width / 2 - (targetRect.left + targetRect.width / 2);
+			const dy = otherRect.top + otherRect.height / 2 - (targetRect.top + targetRect.height / 2);
+			const distance = Math.sqrt(dx * dx + dy * dy);
+
+			const maxDistance = 350;
+			const repulsionStrength = 25;
+
+			if (distance < maxDistance) {
+				const force = (1 - distance / maxDistance) * repulsionStrength;
+				const pushX = (dx / distance) * force;
+				const pushY = (dy / distance) * force;
+
+				gsap.to(card, {
+					x: pushX,
+					y: pushY,
+					duration: 0.4,
+					ease: 'power3.out'
+				});
+			}
+		});
+	}
+
+	function handleMouseLeave() {
+		hideConnections();
+
+		if (!gsap) return;
+
+		const cards = gridContainer.querySelectorAll('.card-container');
+		gsap.to(cards, {
+			x: 0,
+			y: 0,
+			scale: 1,
+			duration: 0.4,
+			ease: 'power3.out',
+			overwrite: 'auto'
+		});
+	}
 
 	function getConnectorPoints(element: HTMLElement, side: 'left' | 'right') {
 		const rect = element.getBoundingClientRect();
@@ -77,9 +131,7 @@
 	}
 
 	afterUpdate(() => {
-		// Aggiungiamo un controllo: eseguiamo l'animazione solo se GSAP è stato caricato.
 		if (!gsap) return;
-
 		const stops = document.querySelectorAll('.gradient-stop-animate');
 		stops.forEach((stop) => {
 			gsap.fromTo(
@@ -133,16 +185,28 @@
 		</defs>
 	</svg>
 
+	<!-- 
+    MODIFICA RESPONSIVE QUI:
+    - grid-cols-2: Imposta 2 colonne come default (mobile-first).
+    - Rimosso md:grid-cols-2 perché ora è ridondante.
+    - Mantenuti lg:grid-cols-3 e xl:grid-cols-4 per schermi più grandi.
+  -->
 	<div
-		class="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto px-4 pb-12"
+		class="relative z-10 grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 max-w-7xl mx-auto px-4 pb-12"
 	>
 		{#if data.posts && data.posts.length > 0}
 			{#each data.posts as post}
+				<!-- 
+          MODIFICA RESPONSIVE QUI:
+          - aspect-square: Forza il contenitore ad avere un rapporto 1:1.
+            La NodeCard all'interno, con h-full, si adatterà.
+        -->
 				<div
+					class="card-container aspect-square"
 					role="button"
 					tabindex="0"
-					on:mouseover={() => showConnections(post.slug)}
-					on:mouseout={hideConnections}
+					on:mouseenter={(e) => handleMouseEnter(e, post.slug)}
+					on:mouseleave={handleMouseLeave}
 					on:focus={() => showConnections(post.slug)}
 					on:blur={hideConnections}
 					on:keydown={(e) => {
