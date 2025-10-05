@@ -1,54 +1,68 @@
 // src/lib/server/posts.ts
 import { compile } from 'mdsvex';
-import fm from 'front-matter'; // Dobbiamo installare questa dipendenza
+import fm from 'front-matter';
+import remarkGfm from 'remark-gfm'; // 1. Importiamo il plugin
 
-// Definiamo un tipo per i metadati estratti da front-matter
 type PostMetadata = {
   title: string;
-  related?: string[];
+  category?: string;
+  [key: string]: any;
 };
 
 export type Post = {
   slug: string;
   category: string;
   title: string;
-  related?: string[];
-  content?: string; // Sarà una stringa HTML
+  content?: string;
+  [key: string]: any;
 };
 
-// Carichiamo i file come testo grezzo
-const modules = import.meta.glob('/src/content/**/*.md', { as: 'raw', eager: true });
+const modules = import.meta.glob('/src/content/**/*.md', { query: '?raw', import: 'default', eager: true });
 
-// Funzione helper per processare un singolo file
 async function processMarkdown(path: string, markdown: string): Promise<Post | null> {
-  const { attributes, body } = fm<PostMetadata>(markdown);
-  const compiled = await compile(body);
+  try {
+    const { attributes, body } = fm<PostMetadata>(markdown);
+    
+    // --- LA CORREZIONE È QUI ---
+    // 2. Passiamo la configurazione direttamente alla funzione 'compile'
+    const compiled = await compile(body, {
+      smartypants: true,
+      remarkPlugins: [remarkGfm], // Abilitiamo la sintassi GFM
+    });
 
-  if (!compiled) return null;
+    if (!compiled) return null;
+    
+    const { category: ignoredCategory, ...otherAttributes } = attributes;
 
-  const pathParts = path.split('/');
-  const slug = pathParts.pop()?.replace('.md', '');
-  const category = pathParts.pop();
+    const pathParts = path.split('/');
+    const slug = pathParts.pop()?.replace('.md', '');
+    const category = pathParts.pop();
 
-  if (slug && category) {
-    return {
-      slug,
-      category,
-      title: attributes.title,
-      related: attributes.related,
-      content: compiled.code,
-    };
+    if (slug && category) {
+      return {
+        slug,
+        category,
+        ...otherAttributes,
+        content: compiled.code,
+      };
+    }
+    return null;
+  } catch (e) {
+    console.error(`Errore nel processare il file Markdown: ${path}`, e);
+    return null;
   }
-  return null;
 }
 
+// ... il resto del file (getAllPosts e getPost) rimane identico ...
 export async function getAllPosts(lang: string): Promise<Post[]> {
   const posts: Post[] = [];
   for (const path in modules) {
-    if (path.startsWith(`/src/content/${lang}/`)) {
-      const post = await processMarkdown(path, modules[path]);
+    if (typeof path === 'string' && path.startsWith(`/src/content/${lang}/`)) {
+      const markdown = modules[path] as string;
+      const post = await processMarkdown(path, markdown);
       if (post) {
-        posts.push(post);
+        const { content, ...postWithoutContent } = post;
+        posts.push(postWithoutContent as Post);
       }
     }
   }
@@ -57,7 +71,7 @@ export async function getAllPosts(lang: string): Promise<Post[]> {
 
 export async function getPost(lang: string, category: string, slug: string): Promise<Post | null> {
   const path = `/src/content/${lang}/${category}/${slug}.md`;
-  const markdown = modules[path];
+  const markdown = modules[path] as string;
 
   if (markdown) {
     return processMarkdown(path, markdown);

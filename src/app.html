@@ -2,26 +2,16 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-		<!-- 
-			FIX DEFINITIVO FONT: 
-			Dichiariamo il font qui, nel modo più diretto possibile per il browser.
-			Questo bypassa ogni possibile problema con il processo di build.
-			Assicurati di aver messo il file VT323-Regular.ttf in /static/fonts/
-		-->
-		<style>
-			@font-face {
-				font-family: 'VT323';
-				src: url('/fonts/VT323-Regular.ttf') format('truetype');
-				font-display: swap;
-			}
-		</style>
-
 		%sveltekit.head%
 	</head>
-	<body data-sveltekit-preload-data="hover">
+	<!--
+		--- LA CORREZIONE È QUI ---
+		Applichiamo le classi di base direttamente al tag <body>.
+		Questo è l'approccio più robusto e raccomandato.
+	-->
+	<body data-sveltekit-preload-data="hover" class="text-white min-h-screen font-['Inter']">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

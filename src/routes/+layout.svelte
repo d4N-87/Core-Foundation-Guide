@@ -10,14 +10,12 @@
 {/if}
 
 <!-- 
-  Il tag <main> ora è solo un contenitore strutturale.
-  'relative' e 'z-10' sono ancora necessari per posizionarlo sopra lo sfondo.
+  LA CORREZIONE È QUI:
+  Abbiamo rimosso la classe 'prose' dal tag <main>.
+  Ora occuperà di nuovo tutta la larghezza disponibile, permettendo
+  al contenitore della griglia con 'mx-auto' di centrarsi correttamente.
 -->
 <main class="relative z-10 isolate">
-  <!-- 
-    Spostiamo il padding e gli stili visivi su un div interno.
-    Questo div conterrà tutto il contenuto visibile delle pagine.
-  -->
   <div class="p-4 md:p-8">
     <slot />
   </div>
