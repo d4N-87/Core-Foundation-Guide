@@ -42,6 +42,9 @@
 	},
 	"dependencies": {
 		"front-matter": "^4.0.2",
-		"p5": "^2.0.5"
+		"gsap": "^3.13.0",
+		"p5": "^2.0.5",
+		"rehype-parse": "^9.0.1",
+		"rehype-stringify": "^10.0.1"
 	}
 }

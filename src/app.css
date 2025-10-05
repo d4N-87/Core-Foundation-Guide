@@ -19,6 +19,10 @@ body {
   font-display: swap;
 }
 
+:root {
+  --a-new-variable: 1; /* Aggiunta per forzare il reload */
+}
+
 /*
   --- SOLUZIONE MANUALE E DEFINITIVA ---
   Applichiamo lo stile direttamente. Usiamo un selettore molto specifico
