@@ -5,7 +5,7 @@ import fm from 'front-matter';
 import { error } from '@sveltejs/kit';
 import { marked } from 'marked';
 
-// --- Funzioni Helper ---
+// ... (slugify e formatCategoryName helper rimangono uguali) ...
 function slugify(text: string) {
   return text.toString().toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
 }
@@ -15,17 +15,18 @@ function formatCategoryName(text: string) {
   return words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
 
-// 🔹 CORREZIONE: La funzione helper ora è asincrona
-async function createExcerpt(content: string, maxLength = 100): Promise<string> {
-  const contentWithoutFrontmatter = content.replace(/---[\s\S]*?---/, '').trim();
-  const truncatedContent = contentWithoutFrontmatter.length <= maxLength
-    ? contentWithoutFrontmatter
-    : contentWithoutFrontmatter.slice(0, maxLength).trim() + '...';
-  
-  return await marked.parse(truncatedContent);
+// 🔹 RIPRISTINO: Torniamo a usare marked per l'estratto, ma lo combiniamo con un CSS migliore.
+async function createExcerpt(content: string, maxLength = 150): Promise<string> {
+    const contentWithoutFrontmatter = content.replace(/---[\s\S]*?---/, '').trim();
+    if (contentWithoutFrontmatter.length <= maxLength) {
+        return await marked.parse(contentWithoutFrontmatter);
+    }
+    let truncated = contentWithoutFrontmatter.slice(0, maxLength);
+    truncated = truncated.slice(0, Math.min(truncated.length, truncated.lastIndexOf(' ')));
+    return await marked.parse(truncated + '...');
 }
 
-// --- Tipi ---
+// ... (Il resto del file, Tipi, getPosts, getPost, rimane identico alla versione che usa async/await) ...
 export interface Post {
   lang: string;
   categorySlug: string;
@@ -38,9 +39,6 @@ export interface Post {
 
 const contentDir = path.resolve(process.cwd(), 'src/content');
 
-// --- Funzioni Principali Esportate ---
-
-// 🔹 CORREZIONE: getPosts ora è una funzione asincrona
 export async function getPosts(lang: string): Promise<Post[]> {
   const langDir = path.join(contentDir, lang);
   if (!fs.existsSync(langDir)) return [];
@@ -66,7 +64,6 @@ export async function getPosts(lang: string): Promise<Post[]> {
         categoryName: formatCategoryName(categoryName),
         slug: file.replace(/\.md$/, ''),
         title: attributes.title || 'Senza Titolo',
-        // 🔹 CORREZIONE: Usiamo 'await' per aspettare il risultato di marked
         excerpt: attributes.excerpt ? await marked.parse(attributes.excerpt) : await createExcerpt(body),
       });
     }
@@ -74,7 +71,6 @@ export async function getPosts(lang: string): Promise<Post[]> {
   return allPosts;
 }
 
-// 🔹 CORREZIONE: getPost ora è una funzione asincrona
 export async function getPost(lang: string, categorySlug: string, slug: string): Promise<Post> {
   const langDir = path.join(contentDir, lang);
   const categories = fs.readdirSync(langDir);
@@ -99,7 +95,6 @@ export async function getPost(lang: string, categorySlug: string, slug: string):
     categoryName: formatCategoryName(categoryDirName),
     slug,
     title: attributes.title || 'Senza Titolo',
-    // 🔹 CORREZIONE: Usiamo 'await' anche qui
     excerpt: attributes.excerpt ? await marked.parse(attributes.excerpt) : await createExcerpt(body),
     content: body,
   };
