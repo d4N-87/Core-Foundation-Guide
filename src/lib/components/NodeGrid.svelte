@@ -56,7 +56,6 @@
         const mouseX = e.clientX - gridX;
         const mouseY = e.clientY - gridY;
 
-        // 🔹 CORREZIONE: Troviamo prima quale card è "attiva"
         let activeCard: HTMLElement | null = null;
         for (const card of cards) {
             const { left, top, width, height } = card.getBoundingClientRect();
@@ -69,12 +68,10 @@
         }
 
         cards.forEach((card: any) => {
-          // Se la card corrente è quella attiva
           if (card === activeCard) {
             gsap.to(card, { x: 0, y: -10, scale: 1.1, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
             card.colorTimeline.play();
           } 
-          // Altrimenti, calcoliamo la repulsione
           else {
             const { left, top, width, height } = card.getBoundingClientRect();
             const cardX = (left - gridX) + width / 2;
@@ -83,9 +80,11 @@
             
             let targetX = 0, targetY = 0;
 
-            if (distance < width * 2) { // Zona di influenza per la repulsione
+            // 🔹 CORREZIONE 1: Aumentata la zona di influenza a 4 volte la larghezza della card
+            if (distance < width * 4) { 
               const angle = Math.atan2(mouseY - cardY, mouseX - cardX);
-              const move = -80 / distance;
+              // 🔹 CORREZIONE 2: Aumentato il moltiplicatore a -400 per una spinta molto più forte
+              const move = -400 / distance;
               targetX = Math.cos(angle) * move;
               targetY = Math.sin(angle) * move;
             }
