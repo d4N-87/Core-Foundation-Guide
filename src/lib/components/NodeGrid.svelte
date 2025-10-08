@@ -15,76 +15,104 @@
     const mod = await import('gsap');
     gsap = mod.gsap;
     
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       const cards = gsap.utils.toArray<HTMLElement>('.card-container');
       
-      // 🔹 Per ogni card, creiamo e salviamo la sua timeline di animazione dei colori
+      function createFloatingAnimation() {
+        cards.forEach((card: any) => {
+          if (card.floatingTween) card.floatingTween.kill();
+          card.floatingTween = gsap.to(card, {
+            y: gsap.utils.random(-8, 8),
+            duration: gsap.utils.random(3, 5),
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+            delay: gsap.utils.random(0, 4)
+          });
+        });
+      }
+
       cards.forEach((card: any) => {
         const border = card.querySelector('.card-border');
         const title = card.querySelector('.card-title');
         const dividers = card.querySelectorAll('.card-divider');
         const categoryText = card.querySelector('.card-category-text');
         const categoryDot = card.querySelector('.card-category-dot');
-
-        const tl = gsap.timeline({ paused: true });
-        tl.to(border, { borderColor: '#FBBF24' }, 0)
+        card.colorTimeline = gsap.timeline({ paused: true })
+          .to([border, ...dividers], { borderColor: '#FBBF24' }, 0)
           .to(title, { color: '#FBBF24' }, 0)
-          .to(dividers, { borderColor: 'rgba(251, 191, 36, 0.3)' }, 0)
           .to(categoryText, { color: '#F59E0B' }, 0)
           .to(categoryDot, { backgroundColor: '#F59E0B' }, 0);
-        
-        card.colorTimeline = tl; // Salviamo la timeline direttamente sull'elemento
       });
 
-      // 🔹 Listener sull'INTERA GRIGLIA
+      createFloatingAnimation();
+
+      gridElement.addEventListener('mouseenter', () => {
+        cards.forEach((card: any) => card.floatingTween.kill());
+      });
+
       gridElement.addEventListener('mousemove', (e) => {
         const { left: gridX, top: gridY } = gridElement.getBoundingClientRect();
         const mouseX = e.clientX - gridX;
         const mouseY = e.clientY - gridY;
 
-        cards.forEach((card: any) => {
-          const { left, top, width, height } = card.getBoundingClientRect();
-          const cardX = (left - gridX) + width / 2;
-          const cardY = (top - gridY) + height / 2;
-          
-          const distance = Math.hypot(mouseX - cardX, mouseY - cardY);
-          const angle = Math.atan2(mouseY - cardY, mouseX - cardX);
+        // 🔹 CORREZIONE: Troviamo prima quale card è "attiva"
+        let activeCard: HTMLElement | null = null;
+        for (const card of cards) {
+            const { left, top, width, height } = card.getBoundingClientRect();
+            const cardLeft = left - gridX;
+            const cardTop = top - gridY;
+            if (mouseX >= cardLeft && mouseX <= cardLeft + width && mouseY >= cardTop && mouseY <= cardTop + height) {
+                activeCard = card;
+                break;
+            }
+        }
 
-          // Se siamo molto vicini (sopra la card)
-          if (distance < width * 0.8) {
-            gsap.to(card, { x: 0, y: -10, scale: 1.1, ease: 'power2.out', duration: 0.4, overwrite: 'auto' });
+        cards.forEach((card: any) => {
+          // Se la card corrente è quella attiva
+          if (card === activeCard) {
+            gsap.to(card, { x: 0, y: -10, scale: 1.1, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
             card.colorTimeline.play();
           } 
-          // Se siamo nel "campo di influenza"
-          else if (distance < width * 2) {
-            const move = -80 / distance; // Invertiamo la forza per respingere
-            gsap.to(card, { x: Math.cos(angle) * move, y: Math.sin(angle) * move, scale: 1, ease: 'power2.out', duration: 0.4, overwrite: 'auto' });
-            card.colorTimeline.reverse();
-          } 
-          // Se siamo lontani
+          // Altrimenti, calcoliamo la repulsione
           else {
-            gsap.to(card, { x: 0, y: 0, scale: 1, ease: 'power2.out', duration: 0.4, overwrite: 'auto' });
+            const { left, top, width, height } = card.getBoundingClientRect();
+            const cardX = (left - gridX) + width / 2;
+            const cardY = (top - gridY) + height / 2;
+            const distance = Math.hypot(mouseX - cardX, mouseY - cardY);
+            
+            let targetX = 0, targetY = 0;
+
+            if (distance < width * 2) { // Zona di influenza per la repulsione
+              const angle = Math.atan2(mouseY - cardY, mouseX - cardX);
+              const move = -80 / distance;
+              targetX = Math.cos(angle) * move;
+              targetY = Math.sin(angle) * move;
+            }
+            
+            gsap.to(card, { x: targetX, y: targetY, scale: 1, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
             card.colorTimeline.reverse();
           }
         });
       });
 
-      // 🔹 Quando il mouse LASCIA L'INTERA GRIGLIA, resetta tutto
       gridElement.addEventListener('mouseleave', () => {
         cards.forEach((card: any) => {
           gsap.to(card, {
             x: 0, y: 0, scale: 1,
             duration: 0.6,
-            ease: 'elastic.out(1, 0.75)'
+            ease: 'elastic.out(1, 0.75)',
+            onComplete: () => {
+              createFloatingAnimation();
+            }
           });
           card.colorTimeline.reverse();
         });
       });
-    });
+    }, 100);
   });
 </script>
 
-<!-- Il markup HTML di NodeGrid rimane invariato -->
 <div class="isolate grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5" bind:this={gridElement}>
   {#if posts && posts.length > 0}
     {#each posts as post (post.slug)}
@@ -99,5 +127,7 @@
         />
       </div>
     {/each}
+  {:else}
+    <p>Nessun post da mostrare.</p>
   {/if}
 </div>
