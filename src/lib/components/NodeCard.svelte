@@ -25,19 +25,31 @@
   </div>
 
   <!-- 
-    🔹 CORREZIONE: Il padding è applicato al contenitore con overflow-hidden.
-    Questo crea una zona cuscinetto INVALICABILE.
+    SEZIONE 2: Contenuto.
+    - 'relative' è necessario per posizionare l'overlay del gradiente.
   -->
-  <div class="overflow-hidden border-t border-cyan-500/20 card-divider p-4 pt-3 md:p-5 md:pt-4">
-    {#if excerpt}
-      <div class="text-gray-400 leading-snug 
-                  prose prose-sm prose-invert prose-p:text-gray-400 prose-strong:text-amber-400
-                  line-clamp-5 md:line-clamp-6 xl:line-clamp-9">
-        {@html excerpt}
-      </div>
-    {:else}
-      <div class="text-transparent">Nessuna anteprima.</div>
-    {/if}
+  <div class="relative overflow-hidden border-t border-cyan-500/20 card-divider">
+    <div class="p-4 pt-3 md:p-5 md:pt-4 h-full">
+      {#if excerpt}
+        <!-- 🔹 CORREZIONE: Rimossa la classe 'line-clamp-*' -->
+        <div class="text-gray-400 leading-snug 
+                    prose prose-sm prose-invert prose-p:text-gray-400 prose-strong:text-amber-400">
+          {@html excerpt}
+        </div>
+      {:else}
+        <div class="text-transparent">Nessuna anteprima.</div>
+      {/if}
+    </div>
+
+    <!-- 
+      🔹 CORREZIONE: Aggiunto un 'div' per la maschera a gradiente.
+      - 'absolute inset-x-0 bottom-0 h-12': Lo posiziona in fondo alla cella.
+      - 'bg-gradient-to-t from-slate-950/50': Crea un gradiente che va da un colore
+        semi-trasparente (che si fonde con lo sfondo) a completamente trasparente.
+        Questo nasconde il testo che va sotto.
+      - 'pointer-events-none': Assicura che non interferisca con il mouse.
+    -->
+    <div class="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-950/60 to-transparent pointer-events-none"></div>
   </div>
   
   <!-- SEZIONE 3: Categoria -->
