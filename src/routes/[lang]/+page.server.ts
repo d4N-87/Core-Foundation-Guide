@@ -1,10 +1,14 @@
 // src/routes/[lang]/+page.server.ts
-import { getAllPosts } from '$lib/server/posts';
+import { getPosts } from '$lib/server/posts';
+import type { PageServerLoad } from './$types';
 
-export const load = async ({ params }) => {
-  const lang = params.lang || 'it';
-  const posts = await getAllPosts(lang);
+export const load: PageServerLoad = async ({ params }) => {
+  const { lang } = params;
+  // 🔹 CORREZIONE: Aggiunto 'await'
+  const posts = await getPosts(lang);
 
-  // Non c'è più il console.log
-  return { posts, lang };
+  return {
+    lang,
+    posts,
+  };
 };

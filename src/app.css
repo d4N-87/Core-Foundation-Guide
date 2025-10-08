@@ -1,6 +1,8 @@
 /* src/app.css */
-@import "tailwindcss";
-@plugin "@tailwindcss/typography";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
   background-color: #0a0a0a;
@@ -17,18 +19,4 @@ body {
   src: url('/fonts/Inter-Bold.ttf') format('truetype');
   font-weight: 700;
   font-display: swap;
-}
-
-:root {
-  --a-new-variable: 1; /* Aggiunta per forzare il reload */
-}
-
-/*
-  --- SOLUZIONE MANUALE E DEFINITIVA ---
-  Applichiamo lo stile direttamente. Usiamo un selettore molto specifico
-  per garantire che questa regola sovrascriva quelle di default di 'prose'.
-  La direttiva '@apply' qui funziona perché è a livello principale del file.
-*/
-.prose-invert strong {
-  @apply text-amber-400;
 }

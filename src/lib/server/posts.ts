@@ -1,85 +1,106 @@
 // src/lib/server/posts.ts
-import { compile } from 'mdsvex';
+import fs from 'fs';
+import path from 'path';
 import fm from 'front-matter';
-import remarkGfm from 'remark-gfm';
-import { unified } from 'unified';
-import rehypeParse from 'rehype-parse';
-import rehypeStringify from 'rehype-stringify';
-import visit from 'unist-util-visit';
+import { error } from '@sveltejs/kit';
+import { marked } from 'marked';
 
-export type Post = {
-  slug: string;
-  category: string;
-  title: string;
-  excerpt?: string;
-  content?: string;
-  [key: string]: any;
-};
-
-const modules = import.meta.glob('/src/content/**/*.md', { query: '?raw', import: 'default', eager: true });
-
-async function processMarkdown(path: string, markdown: string): Promise<Post | null> {
-  try {
-    const { attributes, body } = fm<any>(markdown);
-    const compiled = await compile(body, {
-      smartypants: true,
-      remarkPlugins: [remarkGfm],
-    });
-    if (!compiled) return null;
-
-    const processedContent = await unified()
-      .use(rehypeParse, { fragment: true })
-      .use(() => (tree: any) => {
-        visit(tree, 'element', (node: any) => {
-          if (node.tagName === 'strong') {
-            node.properties = node.properties || {};
-            if (!Array.isArray(node.properties.className)) {
-              node.properties.className = [];
-            }
-            node.properties.className.push('text-amber-400');
-          }
-        });
-      })
-      .use(rehypeStringify)
-      .process(compiled.code);
-    
-    const content = String(processedContent);
-
-    const firstParagraphMatch = content.match(/<p>(.*?)<\/p>/);
-    let excerpt = '';
-    if (firstParagraphMatch && firstParagraphMatch[1]) {
-      excerpt = firstParagraphMatch[1].substring(0, 150) + '...';
-    }
-
-    const { category: ignoredCategory, ...otherAttributes } = attributes;
-    const pathParts = path.split('/');
-    const slug = pathParts.pop()?.replace('.md', '');
-    const category = pathParts.pop();
-
-    if (slug && category) {
-      return { slug, category, ...otherAttributes, excerpt, content };
-    }
-    return null;
-  } catch (e) { return null; }
+// --- Funzioni Helper ---
+function slugify(text: string) {
+  return text.toString().toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
 }
 
-export async function getAllPosts(lang: string): Promise<Post[]> {
-  const posts: Post[] = [];
-  for (const path in modules) {
-    if (typeof path === 'string' && path.startsWith(`/src/content/${lang}/`)) {
-      const markdown = modules[path] as string;
-      const post = await processMarkdown(path, markdown);
-      if (post) {
-        posts.push(post as Post);
-      }
+function formatCategoryName(text: string) {
+  const words = text.replace(/_/g, ' ').split(' ');
+  return words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+}
+
+// 🔹 CORREZIONE: La funzione helper ora è asincrona
+async function createExcerpt(content: string, maxLength = 100): Promise<string> {
+  const contentWithoutFrontmatter = content.replace(/---[\s\S]*?---/, '').trim();
+  const truncatedContent = contentWithoutFrontmatter.length <= maxLength
+    ? contentWithoutFrontmatter
+    : contentWithoutFrontmatter.slice(0, maxLength).trim() + '...';
+  
+  return await marked.parse(truncatedContent);
+}
+
+// --- Tipi ---
+export interface Post {
+  lang: string;
+  categorySlug: string;
+  categoryName: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content?: string;
+}
+
+const contentDir = path.resolve(process.cwd(), 'src/content');
+
+// --- Funzioni Principali Esportate ---
+
+// 🔹 CORREZIONE: getPosts ora è una funzione asincrona
+export async function getPosts(lang: string): Promise<Post[]> {
+  const langDir = path.join(contentDir, lang);
+  if (!fs.existsSync(langDir)) return [];
+
+  const categories = fs.readdirSync(langDir, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name);
+
+  const allPosts: Post[] = [];
+
+  for (const categoryName of categories) {
+    const categoryDir = path.join(langDir, categoryName);
+    const files = fs.readdirSync(categoryDir).filter(file => file.endsWith('.md'));
+
+    for (const file of files) {
+      const filePath = path.join(categoryDir, file);
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const { attributes, body } = fm<any>(fileContent);
+
+      allPosts.push({
+        lang: lang,
+        categorySlug: slugify(categoryName),
+        categoryName: formatCategoryName(categoryName),
+        slug: file.replace(/\.md$/, ''),
+        title: attributes.title || 'Senza Titolo',
+        // 🔹 CORREZIONE: Usiamo 'await' per aspettare il risultato di marked
+        excerpt: attributes.excerpt ? await marked.parse(attributes.excerpt) : await createExcerpt(body),
+      });
     }
   }
-  return posts;
+  return allPosts;
 }
 
-export async function getPost(lang: string, category: string, slug: string): Promise<Post | null> {
-  const path = `/src/content/${lang}/${category}/${slug}.md`;
-  const markdown = modules[path] as string;
-  if (markdown) { return processMarkdown(path, markdown); }
-  return null;
+// 🔹 CORREZIONE: getPost ora è una funzione asincrona
+export async function getPost(lang: string, categorySlug: string, slug: string): Promise<Post> {
+  const langDir = path.join(contentDir, lang);
+  const categories = fs.readdirSync(langDir);
+  const categoryDirName = categories.find(dir => slugify(dir) === categorySlug);
+
+  if (!categoryDirName) {
+    throw error(404, 'Categoria non trovata');
+  }
+
+  const filePath = path.join(langDir, categoryDirName, `${slug}.md`);
+
+  if (!fs.existsSync(filePath)) {
+    throw error(404, 'Articolo non trovato');
+  }
+
+  const fileContent = fs.readFileSync(filePath, 'utf-8');
+  const { attributes, body } = fm<any>(fileContent);
+
+  return {
+    lang,
+    categorySlug,
+    categoryName: formatCategoryName(categoryDirName),
+    slug,
+    title: attributes.title || 'Senza Titolo',
+    // 🔹 CORREZIONE: Usiamo 'await' anche qui
+    excerpt: attributes.excerpt ? await marked.parse(attributes.excerpt) : await createExcerpt(body),
+    content: body,
+  };
 }

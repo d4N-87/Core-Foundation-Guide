@@ -1,12 +1,20 @@
-// tailwind.config.js
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: ['./src/**/*.{html,js,svelte,ts,md}'],
+module.exports = {
+  content: [
+    './src/**/*.{html,js,svelte,ts,md}'
+  ],
   theme: {
     extend: {
-      // Rimuoviamo la configurazione 'typography' da qui
+      typography: ({ theme }) => ({
+        invert: {
+          css: {
+            '--tw-prose-bold': theme('colors.amber[400]'),
+          },
+        },
+      }),
     },
   },
-  // Rimuoviamo anche la sezione plugins da qui
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 };

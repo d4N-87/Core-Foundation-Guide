@@ -1,21 +1,37 @@
 // vite.config.ts
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import tailwindcss from '@tailwindcss/vite';
+
+// 🔹 RIMOSSO: l'import di @tailwindcss/vite
 
 export default defineConfig({
-	plugins: [
-		sveltekit(),
-		tailwindcss(),
-		// --- NUOVO PLUGIN ---
-		// Questo plugin intercetta i file .md e li carica come testo grezzo
-		{
-			name: 'markdown-loader',
-			transform(code, id) {
-				if (id.endsWith('.md')) {
-					return `export default ${JSON.stringify(code)};`;
-				}
-			}
-		}
-	]
+  // 🔹 RIMOSSO: il plugin tailwindcss() dall'array
+  plugins: [
+    sveltekit(),
+    {
+      name: 'markdown-loader',
+      transform(code, id) {
+        if (id.endsWith('.raw.md')) {
+          return `export default ${JSON.stringify(code)};`;
+        }
+      },
+    },
+  ],
+
+  resolve: {
+    alias: {
+      $lib: '/src/lib',
+    },
+  },
+
+  optimizeDeps: {
+    include: ['gsap'],
+  },
+
+  server: {
+    watch: {},
+    fs: {
+      strict: false,
+    },
+  },
 });

@@ -1,88 +1,57 @@
 <!-- src/lib/components/NodeCard.svelte -->
 <script lang="ts">
-	import { onMount } from 'svelte';
-	// L'import di GSAP è stato RIMOSSO da qui
-	import { translations } from '$lib/translations';
-	import type { Post } from '$lib/server/posts';
+  export let title: string;
+  export let slug: string;
+  export let categorySlug: string;
+  export let categoryName: string;
+  export let lang: string;
+  export let excerpt: string | undefined;
 
-	export let lang: string;
-	export let category: string = '';
-	export let slug: string | undefined;
-	export let title: string;
-	export let excerpt: string | undefined;
-
-	let cardElement: HTMLDivElement;
-
-	onMount(async () => {
-		// Importazione DINAMICA: avviene solo nel browser
-		const { gsap } = await import('gsap');
-
-		// Il resto del codice è identico, ma ora 'gsap' esiste solo qui dentro
-		gsap.to(cardElement, {
-			y: -8,
-			duration: 2.5 + Math.random() * 2,
-			ease: 'sine.inOut',
-			repeat: -1,
-			yoyo: true,
-			delay: Math.random() * 2
-		});
-	});
-
-	function formatCategory(cat: string): string {
-		if (!cat) return '';
-		return cat
-			.split('_')
-			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-			.join(' ');
-	}
-
-	const t = translations[lang as keyof typeof translations] || translations.it;
+  const cardHref = `/${lang}/${categorySlug}/${slug}`;
 </script>
 
-<div
-	bind:this={cardElement}
-	id="node-{slug}"
-	class="group relative bg-slate-900/60 border border-slate-700/80 backdrop-blur-sm rounded-lg p-6 flex flex-col h-full transition-all duration-300 hover:border-cyan-400 hover:shadow-[0_0_20px_theme(colors.cyan.400/0.4)]"
->
-	<!-- Il resto del template rimane invariato -->
-	<div
-		class="absolute -top-px -left-px w-4 h-4 border-t border-l border-cyan-400 rounded-tl-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-	></div>
-	<div
-		class="absolute -top-px -right-px w-4 h-4 border-t border-r border-cyan-400 rounded-tr-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-	></div>
-	<div
-		class="absolute -bottom-px -left-px w-4 h-4 border-b border-l border-cyan-400 rounded-bl-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-	></div>
-	<div
-		class="absolute -bottom-px -right-px w-4 h-4 border-b border-r border-cyan-400 rounded-br-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-	></div>
+<a href={cardHref} class="block h-full w-full text-left">
+  <div
+    class="relative h-full w-full rounded-xl
+           bg-gradient-to-br from-cyan-950/20 to-slate-950/10
+           backdrop-blur-lg border-2 border-cyan-500/30
+           shadow-lg shadow-cyan-900/50
+           group-hover:border-amber-400/80 group-hover:shadow-xl group-hover:shadow-amber-500/20
+           overflow-hidden
+           ease-in-out duration-300
+           grid grid-rows-[auto_1fr_auto]" 
+    >
+    <!-- SEZIONE 1: Titolo -->
+    <div class="p-4 pb-3 md:p-5 md:pb-4">
+      <!-- 🔹 CORREZIONE 2: Ridotta la dimensione del titolo su desktop (rimosso md:text-lg) -->
+      <h2 class="font-bold text-gray-100 text-base transition-colors group-hover:text-amber-400">
+        {title}
+      </h2>
+    </div>
 
-	<div class="flex-grow">
-		<a href={`/${lang}/${category}/${slug}`}>
-			<h3
-				class="text-lg font-bold text-slate-100 group-hover:text-cyan-400 transition-colors duration-300"
-			>
-				{title}
-			</h3>
-		</a>
-
-		{#if excerpt}
-			<p class="mt-3 text-sm text-slate-400 leading-relaxed">
-				{@html excerpt}
-			</p>
-		{/if}
-	</div>
-
-	<div class="mt-4 pt-4 border-t border-slate-700/50">
-		<div class="text-sm text-slate-400">
-			{t.category}:
-			<a
-				href={`/${lang}/${category}`}
-				class="text-amber-400 underline hover:text-cyan-400 transition-colors"
-			>
-				{formatCategory(category)}
-			</a>
-		</div>
-	</div>
-</div>
+    <!-- SEZIONE 2: Contenuto con divisore superiore -->
+    <div class="overflow-y-hidden border-t border-cyan-500/20 group-hover:border-amber-400/30 transition-colors">
+      <div class="p-4 pt-3 md:p-5 md:pt-4 h-full">
+        {#if excerpt}
+          <!-- 🔹 CORREZIONE 3: Rimossa la classe md:prose-base per mantenere il testo piccolo -->
+          <div class="text-gray-400 leading-snug 
+                      prose prose-sm prose-invert prose-p:text-gray-400 prose-strong:text-amber-400
+                      line-clamp-5 md:line-clamp-6 xl:line-clamp-9">
+            {@html excerpt}
+          </div>
+        {:else}
+          <div class="text-transparent">Nessuna anteprima.</div>
+        {/if}
+      </div>
+    </div>
+    
+    <!-- SEZIONE 3: Categoria con divisore superiore -->
+    <div>
+      <div class="border-t border-cyan-500/20 group-hover:border-amber-400/30 transition-colors"></div>
+      <div class="p-3 text-right text-xs font-semibold text-cyan-400 group-hover:text-amber-500 transition-colors flex items-center justify-end gap-2">
+        <span>{categoryName}</span>
+        <div class="w-2 h-2 rounded-full bg-cyan-400 group-hover:bg-amber-500 transition-colors"></div>
+      </div>
+    </div>
+  </div>
+</a>

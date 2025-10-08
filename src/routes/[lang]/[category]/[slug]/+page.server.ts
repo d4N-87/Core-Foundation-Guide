@@ -1,19 +1,18 @@
 // src/routes/[lang]/[category]/[slug]/+page.server.ts
-import { error } from '@sveltejs/kit';
-import { getPost } from '$lib/server/posts'; // Deve usare getPost (singolare)
+import { getPost } from '$lib/server/posts';
+import type { PageServerLoad } from './$types';
+import { marked } from 'marked';
 
-export const load = async ({ params }) => {
-  // Rimuoviamo tutti i log di debug per pulizia
-  const post = await getPost(params.lang, params.category, params.slug);
+export const load: PageServerLoad = async ({ params }) => {
+  const { lang, category, slug } = params;
+  // 🔹 CORREZIONE: Aggiunto 'await'
+  const post = await getPost(lang, category, slug);
 
-  if (!post) {
-    // Se getPost restituisce null, lanciamo un errore 404
-    throw error(404, 'Articolo non trovato');
+  if (post.content) {
+    post.content = await marked.parse(post.content);
   }
 
-  // Restituiamo un oggetto con la proprietà 'post' (singolare)
   return {
     post,
-    lang: params.lang
   };
 };
