@@ -45,6 +45,7 @@
 		"front-matter": "^4.0.2",
 		"gsap": "^3.13.0",
 		"marked": "^16.4.0",
+		"marked-footnote": "^1.4.0",
 		"p5": "^2.0.5",
 		"rehype-parse": "^9.0.1",
 		"rehype-stringify": "^10.0.1"

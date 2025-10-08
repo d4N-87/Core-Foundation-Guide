@@ -5,7 +5,7 @@ import fm from 'front-matter';
 import { error } from '@sveltejs/kit';
 import { marked } from 'marked';
 
-// ... (slugify e formatCategoryName helper rimangono uguali) ...
+// --- Funzioni Helper (invariate) ---
 function slugify(text: string) {
   return text.toString().toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
 }
@@ -15,7 +15,6 @@ function formatCategoryName(text: string) {
   return words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
 
-// 🔹 RIPRISTINO: Torniamo a usare marked per l'estratto, ma lo combiniamo con un CSS migliore.
 async function createExcerpt(content: string, maxLength = 150): Promise<string> {
     const contentWithoutFrontmatter = content.replace(/---[\s\S]*?---/, '').trim();
     if (contentWithoutFrontmatter.length <= maxLength) {
@@ -26,7 +25,13 @@ async function createExcerpt(content: string, maxLength = 150): Promise<string> 
     return await marked.parse(truncated + '...');
 }
 
-// ... (Il resto del file, Tipi, getPosts, getPost, rimane identico alla versione che usa async/await) ...
+// --- Tipi ---
+// 🔹 1. Definiamo un tipo per la singola fonte
+export interface Source {
+  text: string;
+  url: string;
+}
+
 export interface Post {
   lang: string;
   categorySlug: string;
@@ -35,11 +40,16 @@ export interface Post {
   title: string;
   excerpt: string;
   content?: string;
+  sources?: Source[]; // 🔹 2. Aggiungiamo un array opzionale di fonti al tipo Post
 }
 
 const contentDir = path.resolve(process.cwd(), 'src/content');
 
+// --- Funzioni Principali ---
+
+// getPosts non ha bisogno di caricare le fonti, lo facciamo solo per il post singolo
 export async function getPosts(lang: string): Promise<Post[]> {
+  // ... (questa funzione rimane ESATTAMENTE la stessa di prima)
   const langDir = path.join(contentDir, lang);
   if (!fs.existsSync(langDir)) return [];
 
@@ -71,6 +81,7 @@ export async function getPosts(lang: string): Promise<Post[]> {
   return allPosts;
 }
 
+// 🔹 3. Modifichiamo getPost per leggere e restituire l'array 'sources'
 export async function getPost(lang: string, categorySlug: string, slug: string): Promise<Post> {
   const langDir = path.join(contentDir, lang);
   const categories = fs.readdirSync(langDir);
@@ -97,5 +108,6 @@ export async function getPost(lang: string, categorySlug: string, slug: string):
     title: attributes.title || 'Senza Titolo',
     excerpt: attributes.excerpt ? await marked.parse(attributes.excerpt) : await createExcerpt(body),
     content: body,
+    sources: attributes.sources || [], // Leggiamo le fonti, con un fallback a un array vuoto
   };
 }
