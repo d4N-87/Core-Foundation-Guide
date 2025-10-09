@@ -16,22 +16,17 @@
          backdrop-blur-lg border-2 border-cyan-500/30 card-border
          shadow-lg shadow-cyan-900/50 card-shadow
          grid grid-rows-[auto_1fr_auto]"
+  style="view-transition-name: article-{categorySlug}-{slug}"
 >
   <!-- SEZIONE 1: Titolo -->
   <div class="p-4 pb-3 md:p-5 md:pb-4">
-    <h2 class="font-bold text-gray-100 text-base card-title">
-      {title}
-    </h2>
+    <h2 class="font-bold text-gray-100 text-base card-title">{title}</h2>
   </div>
 
-  <!-- 
-    SEZIONE 2: Contenuto.
-    - 'relative' è necessario per posizionare l'overlay del gradiente.
-  -->
+  <!-- SEZIONE 2: Contenuto con maschera -->
   <div class="relative overflow-hidden border-t border-cyan-500/20 card-divider">
     <div class="p-4 pt-3 md:p-5 md:pt-4 h-full">
       {#if excerpt}
-        <!-- 🔹 CORREZIONE: Rimossa la classe 'line-clamp-*' -->
         <div class="text-gray-400 leading-snug 
                     prose prose-sm prose-invert prose-p:text-gray-400 prose-strong:text-amber-400">
           {@html excerpt}
@@ -40,15 +35,7 @@
         <div class="text-transparent">Nessuna anteprima.</div>
       {/if}
     </div>
-
-    <!-- 
-      🔹 CORREZIONE: Aggiunto un 'div' per la maschera a gradiente.
-      - 'absolute inset-x-0 bottom-0 h-12': Lo posiziona in fondo alla cella.
-      - 'bg-gradient-to-t from-slate-950/50': Crea un gradiente che va da un colore
-        semi-trasparente (che si fonde con lo sfondo) a completamente trasparente.
-        Questo nasconde il testo che va sotto.
-      - 'pointer-events-none': Assicura che non interferisca con il mouse.
-    -->
+    <!-- 🔹 REINTRODOTTA: La maschera a gradiente per la sfumatura -->
     <div class="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-950/60 to-transparent pointer-events-none"></div>
   </div>
   

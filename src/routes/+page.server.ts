@@ -1,6 +1,12 @@
-// Redirect dalla root alla lingua italiana come default
-import { redirect } from '@sveltejs/kit';
+// src/routes/+page.server.ts
+import type { PageServerLoad } from './$types';
+import type { Language } from '$lib/translations'; // 🔹 Importiamo il nostro nuovo tipo
 
-export const load = async () => {
-  throw redirect(308, '/it');
+export const load: PageServerLoad = async ({ request }) => {
+  // 🔹 Dichiariamo che defaultLang è di tipo Language
+  const defaultLang: Language = 'it'; 
+
+  return {
+    defaultLang,
+  };
 };

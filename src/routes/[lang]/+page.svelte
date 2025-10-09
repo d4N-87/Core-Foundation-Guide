@@ -2,10 +2,21 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import NodeGrid from '$lib/components/NodeGrid.svelte';
-  export let data: PageData;
+  import { transitionStore } from '$lib/transitionStore';
+  import { goto } from '$app/navigation';
 
-  // I dati dei post arrivano dal +page.server.ts
+  export let data: PageData;
   const posts = data.posts ?? [];
+
+  function handleCardClick(event: CustomEvent) {
+    const { slug, categorySlug, element } = event.detail;
+    
+    // 1. Salviamo le coordinate dell'elemento cliccato
+    transitionStore.set(element.getBoundingClientRect());
+    
+    // 2. Navighiamo alla pagina dell'articolo
+    goto(`/${data.lang}/${categorySlug}/${slug}`);
+  }
 </script>
 
 <header class="mb-8 md:mb-12 pt-12 text-center">
@@ -14,15 +25,11 @@
   </h1>
 </header>
 
-<!-- 
-  🔹 CORREZIONE: L'unico contenitore qui serve a centrare la griglia.
-  NON ci sono classi 'grid' o loop qui.
--->
 <div class="max-w-7xl mx-auto px-4 pb-12">
   {#if posts.length > 0}
-    <!-- Tutta la responsabilità della griglia è delegata a NodeGrid -->
-    <NodeGrid {posts} lang={data.lang} />
+    <!-- Ascoltiamo l'evento 'cardclick' dal nostro NodeGrid -->
+    <NodeGrid {posts} lang={data.lang} on:cardclick={handleCardClick} />
   {:else}
-    <p class="text-center text-slate-500">Nessun articolo trovato per questa lingua.</p>
+    <p class="text-center text-slate-500">Nessun articolo trovato.</p>
   {/if}
 </div>
