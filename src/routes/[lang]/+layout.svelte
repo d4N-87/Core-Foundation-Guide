@@ -1,10 +1,8 @@
 <!-- src/routes/[lang]/+layout.svelte -->
 
 <!-- 
-  Questo file funge da "contenitore" per tutte le pagine che iniziano con `/[lang]`.
-  La sua sola presenza, con lo <slot /> all'interno, è ciò che
-  abilita la navigazione lato client e le View Transitions tra le pagine
-  che renderizza (la griglia e gli articoli).
+  Questo file è ora semplicissimo. La sua unica funzione
+  è garantire che SvelteKit usi la navigazione lato client
+  per tutte le pagine al suo interno.
 -->
-
 <slot />

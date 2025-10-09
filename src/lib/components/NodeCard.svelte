@@ -1,13 +1,8 @@
 <!-- src/lib/components/NodeCard.svelte -->
 <script lang="ts">
   export let title: string;
-  export let slug: string;
-  export let categorySlug: string;
   export let categoryName: string;
-  export let lang: string;
   export let excerpt: string | undefined;
-
-  const cardHref = `/${lang}/${categorySlug}/${slug}`;
 </script>
 
 <div
@@ -16,7 +11,6 @@
          backdrop-blur-lg border-2 border-cyan-500/30 card-border
          shadow-lg shadow-cyan-900/50 card-shadow
          grid grid-rows-[auto_1fr_auto]"
-  style="view-transition-name: article-{categorySlug}-{slug}"
 >
   <!-- SEZIONE 1: Titolo -->
   <div class="p-4 pb-3 md:p-5 md:pb-4">
@@ -35,7 +29,6 @@
         <div class="text-transparent">Nessuna anteprima.</div>
       {/if}
     </div>
-    <!-- 🔹 REINTRODOTTA: La maschera a gradiente per la sfumatura -->
     <div class="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-950/60 to-transparent pointer-events-none"></div>
   </div>
   
@@ -47,8 +40,4 @@
       <div class="w-2 h-2 rounded-full bg-cyan-400 card-category-dot"></div>
     </div>
   </div>
-
-  <a href={cardHref} class="absolute inset-0 z-10">
-    <span class="sr-only">Leggi l'articolo: {title}</span>
-  </a>
 </div>

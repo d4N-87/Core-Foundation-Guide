@@ -2,16 +2,15 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
+		<!-- 
+      🔹 CORREZIONE: Questo link ora punterà correttamente al file in 'static/favicon.svg'.
+      La '/' all'inizio è fondamentale.
+    -->
+		<link rel="icon" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
 	</head>
-	<!--
-		--- LA CORREZIONE È QUI ---
-		Applichiamo le classi di base direttamente al tag <body>.
-		Questo è l'approccio più robusto e raccomandato.
-	-->
-	<body data-sveltekit-preload-data="hover" class="text-white min-h-screen font-['Inter']">
+	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

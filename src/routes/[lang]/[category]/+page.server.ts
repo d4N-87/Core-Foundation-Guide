@@ -1,11 +1,20 @@
-import { getAllPosts, Post } from '$lib/server/posts';
+// src/routes/[lang]/[category]/+page.server.ts
+import { getPosts } from '$lib/server/posts';
+import type { PageServerLoad } from './$types';
 
-export const load = async ({ params }) => {
-  const lang = params.lang;
-  const allPosts: Post[] = await getAllPosts(lang);
+export const load: PageServerLoad = async ({ params, parent }) => {
+  const { lang, category } = params;
+  const allPosts = await getPosts(lang);
 
-  // Filtra i post per categoria
-  const posts = allPosts.filter(p => p.category.toLowerCase() === params.category.toLowerCase());
+  // 🔹 CORREZIONE: Filtriamo usando 'categorySlug' invece di 'category'
+  const posts = allPosts.filter(p => p.categorySlug === category);
+  
+  const { translations } = await parent();
 
-  return { posts, lang, category: params.category };
+  return {
+    posts,
+    lang,
+    category,
+    translations
+  };
 };

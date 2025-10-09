@@ -1,6 +1,11 @@
 // src/lib/transitionStore.ts
 import { writable } from 'svelte/store';
 
-// Questo store conterrà le coordinate (il bounding box)
-// della card su cui abbiamo cliccato.
-export const transitionStore = writable<DOMRect | null>(null);
+// 🔹 CORREZIONE: Definiamo un tipo per i dati della transizione
+export interface TransitionData {
+  rect: DOMRect;
+  scrollY: number;
+}
+
+// Lo store ora conterrà un oggetto TransitionData o null
+export const transitionStore = writable<TransitionData | null>(null);

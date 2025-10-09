@@ -1,15 +1,24 @@
 <!-- src/lib/components/NodeGrid.svelte -->
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, createEventDispatcher } from 'svelte';
   import NodeCard from '$lib/components/NodeCard.svelte';
   import type { Post } from '$lib/server/posts';
   import type { gsap as GSAP } from 'gsap';
 
   export let posts: Post[] = [];
-  export let lang: string;
+  export let t: any;
+
+  const dispatch = createEventDispatcher();
 
   let gridElement: HTMLDivElement;
   let gsap: typeof GSAP;
+
+  function handleCardClick(event: MouseEvent | KeyboardEvent, post: Post) {
+    dispatch('cardclick', {
+      post: post,
+      element: event.currentTarget
+    });
+  }
 
   onMount(async () => {
     const mod = await import('gsap');
@@ -77,18 +86,13 @@
             const cardX = (left - gridX) + width / 2;
             const cardY = (top - gridY) + height / 2;
             const distance = Math.hypot(mouseX - cardX, mouseY - cardY);
-            
             let targetX = 0, targetY = 0;
-
-            // 🔹 CORREZIONE 1: Aumentata la zona di influenza a 4 volte la larghezza della card
             if (distance < width * 4) { 
               const angle = Math.atan2(mouseY - cardY, mouseX - cardX);
-              // 🔹 CORREZIONE 2: Aumentato il moltiplicatore a -400 per una spinta molto più forte
               const move = -400 / distance;
               targetX = Math.cos(angle) * move;
               targetY = Math.sin(angle) * move;
             }
-            
             gsap.to(card, { x: targetX, y: targetY, scale: 1, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
             card.colorTimeline.reverse();
           }
@@ -115,18 +119,21 @@
 <div class="isolate grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5" bind:this={gridElement}>
   {#if posts && posts.length > 0}
     {#each posts as post (post.slug)}
-      <div class="card-container aspect-square">
+      <div 
+        class="card-container aspect-square cursor-pointer"
+        role="button"
+        tabindex="0"
+        on:click={(e) => handleCardClick(e, post)}
+        on:keydown={(e) => { if (e.key === 'Enter') handleCardClick(e, post) }}
+      >
         <NodeCard
-          lang={lang}
-          categorySlug={post.categorySlug}
           categoryName={post.categoryName}
-          slug={post.slug}
           title={post.title}
           excerpt={post.excerpt}
         />
       </div>
     {/each}
   {:else}
-    <p>Nessun post da mostrare.</p>
+    <p class="col-span-full text-center text-slate-500">{t?.noPostsFound || 'No posts to show.'}</p>
   {/if}
 </div>
