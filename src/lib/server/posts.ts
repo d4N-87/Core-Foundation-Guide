@@ -15,14 +15,16 @@ function formatCategoryName(text: string) {
   return words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
 
-async function createExcerpt(content: string, maxLength = 150): Promise<string> {
+async function createExcerpt(content: string, maxLength = 150): Promise<{ html: string; plain: string }> {
     const contentWithoutFrontmatter = content.replace(/---[\s\S]*?---/, '').trim();
-    if (contentWithoutFrontmatter.length <= maxLength) {
-        return await marked.parse(contentWithoutFrontmatter);
-    }
-    let truncated = contentWithoutFrontmatter.slice(0, maxLength);
-    truncated = truncated.slice(0, Math.min(truncated.length, truncated.lastIndexOf(' ')));
-    return await marked.parse(truncated + '...');
+    let truncated = contentWithoutFrontmatter.length <= maxLength
+        ? contentWithoutFrontmatter
+        : contentWithoutFrontmatter.slice(0, maxLength).slice(0, Math.min(contentWithoutFrontmatter.length, contentWithoutFrontmatter.lastIndexOf(' '))) + '...';
+    
+    const html = await marked.parse(truncated);
+    const plain = truncated.replace(/(\*\*|__)(.*?)\1/g, '$2').replace(/(\*|_)(.*?)\1/g, '$2').replace(/#{1,6}\s+(.*)/g, '$1').replace(/\[(.*?)\]\(.*?\)/g, '$1');
+
+    return { html, plain };
 }
 
 // --- Tipi ---
@@ -38,6 +40,7 @@ export interface Post {
   slug: string;
   title: string;
   excerpt: string;
+  plainExcerpt: string;
   content?: string;
   sources?: Source[];
 }
@@ -64,6 +67,7 @@ export async function getPosts(lang: string): Promise<Post[]> {
       const filePath = path.join(categoryDir, file);
       const fileContent = fs.readFileSync(filePath, 'utf-8');
       const { attributes, body } = fm<any>(fileContent);
+      const excerptData = attributes.excerpt ? { html: await marked.parse(attributes.excerpt), plain: attributes.excerpt } : await createExcerpt(body);
 
       allPosts.push({
         lang: lang,
@@ -71,7 +75,8 @@ export async function getPosts(lang: string): Promise<Post[]> {
         categoryName: formatCategoryName(categoryName),
         slug: file.replace(/\.md$/, ''),
         title: attributes.title || 'Senza Titolo',
-        excerpt: attributes.excerpt ? await marked.parse(attributes.excerpt) : await createExcerpt(body),
+        excerpt: excerptData.html,
+        plainExcerpt: excerptData.plain,
       });
     }
   }
@@ -95,6 +100,7 @@ export async function getPost(lang: string, categorySlug: string, slug: string):
 
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const { attributes, body } = fm<any>(fileContent);
+  const excerptData = attributes.excerpt ? { html: await marked.parse(attributes.excerpt), plain: attributes.excerpt } : await createExcerpt(body);
 
   return {
     lang,
@@ -102,7 +108,8 @@ export async function getPost(lang: string, categorySlug: string, slug: string):
     categoryName: formatCategoryName(categoryDirName),
     slug,
     title: attributes.title || 'Senza Titolo',
-    excerpt: attributes.excerpt ? await marked.parse(attributes.excerpt) : await createExcerpt(body),
+    excerpt: excerptData.html,
+    plainExcerpt: excerptData.plain,
     content: body,
     sources: attributes.sources || [],
   };

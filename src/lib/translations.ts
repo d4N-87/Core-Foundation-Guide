@@ -11,8 +11,9 @@ export const translations = {
     noPostsFound: "Nessun articolo trovato.",
     pageTitleCategory: "Categoria",
     initializing: "Inizializzazione...",
-    backToArticles: "Torna agli articoli", // 🔹 AGGIUNTO
-    sources: "Fonti", // 🔹 AGGIUNTO
+    backToArticles: "Torna agli articoli",
+    sources: "Fonti",
+    searchPlaceholder: "Cerca articoli...",
   },
   en: {
     category: "Category",
@@ -21,8 +22,9 @@ export const translations = {
     noPostsFound: "No articles found.",
     pageTitleCategory: "Category",
     initializing: "Initializing...",
-    backToArticles: "Back to articles", // 🔹 AGGIUNTO
-    sources: "Sources", // 🔹 AGGIUNTO
+    backToArticles: "Back to articles",
+    sources: "Sources",
+    searchPlaceholder: "Search articles...",
   }
 };
 
@@ -33,6 +35,7 @@ export const fallbackTranslations: TranslationSet = {
   noPostsFound: "No articles found.",
   pageTitleCategory: "Category",
   initializing: "Initializing...",
-  backToArticles: "Back to articles", // 🔹 AGGIUNTO
-  sources: "Sources", // 🔹 AGGIUNTO
+  backToArticles: "Back to articles",
+  sources: "Sources",
+  searchPlaceholder: "Search articles...",
 };

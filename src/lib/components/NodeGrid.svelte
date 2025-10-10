@@ -4,9 +4,10 @@
   import NodeCard from '$lib/components/NodeCard.svelte';
   import type { Post } from '$lib/server/posts';
   import type { gsap as GSAP } from 'gsap';
+  import { fly } from 'svelte/transition';
 
   export let posts: Post[] = [];
-  export let t: any;
+  // Rimosso 'export let t'
 
   const dispatch = createEventDispatcher();
 
@@ -117,23 +118,21 @@
 </script>
 
 <div class="isolate grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5" bind:this={gridElement}>
-  {#if posts && posts.length > 0}
-    {#each posts as post (post.slug)}
-      <div 
-        class="card-container aspect-square cursor-pointer"
-        role="button"
-        tabindex="0"
-        on:click={(e) => handleCardClick(e, post)}
-        on:keydown={(e) => { if (e.key === 'Enter') handleCardClick(e, post) }}
-      >
-        <NodeCard
-          categoryName={post.categoryName}
-          title={post.title}
-          excerpt={post.excerpt}
-        />
-      </div>
-    {/each}
-  {:else}
-    <p class="col-span-full text-center text-slate-500">{t?.noPostsFound || 'No posts to show.'}</p>
-  {/if}
+  {#each posts as post (post.slug)}
+    <div 
+      class="card-container aspect-square cursor-pointer"
+      role="button"
+      tabindex="0"
+      on:click={(e) => handleCardClick(e, post)}
+      on:keydown={(e) => { if (e.key === 'Enter') handleCardClick(e, post) }}
+      in:fly={{ y: 20, duration: 300, delay: 100 }}
+      out:fly={{ y: 20, duration: 200 }}
+    >
+      <NodeCard
+        categoryName={post.categoryName}
+        title={post.title}
+        excerpt={post.excerpt}
+      />
+    </div>
+  {/each}
 </div>
