@@ -14,13 +14,23 @@
   const lang = data?.lang as Language | undefined;
   const t = (lang && data?.translations) ? data.translations[lang] : fallbackTranslations;
 
-  let searchTerm = '';
+  const categories = [...new Set(allPosts.map(p => p.categorySlug))].map(slug => ({
+    slug,
+    name: allPosts.find(p => p.categorySlug === slug)?.categoryName || slug,
+    color: allPosts.find(p => p.categorySlug === slug)?.categoryColor || 'slate'
+  }));
 
-  $: filteredPosts = searchTerm === '' ? allPosts : allPosts.filter(post => {
-    const term = searchTerm.toLowerCase();
-    return post.title.toLowerCase().includes(term) || 
-           post.plainExcerpt.toLowerCase().includes(term) ||
-           post.categoryName.toLowerCase().includes(term);
+  let searchTerm = '';
+  let selectedCategories: string[] = [];
+
+  $: filteredPosts = allPosts.filter(post => {
+    const searchMatch = searchTerm === '' || 
+      post.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      post.plainExcerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.categoryName.toLowerCase().includes(searchTerm.toLowerCase());
+    const categoryMatch = selectedCategories.length === 0 || 
+      selectedCategories.includes(post.categorySlug);
+    return searchMatch && categoryMatch;
   });
 
   async function handleCardClick(event: CustomEvent<{ post: Post, element: HTMLElement }>) {
@@ -55,6 +65,30 @@
              placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400
              transition-all"
     />
+  </div>
+
+  <div class="mt-6 flex justify-center items-center gap-x-4 gap-y-3 flex-wrap">
+    {#each categories as category}
+      <label 
+        class="flex items-center gap-2 cursor-pointer p-2 rounded-lg transition-all 
+               border-2 border-transparent hover:bg-slate-800/50 
+               has-[:checked]:border-amber-500 has-[:checked]:bg-amber-900/30
+               has-[:checked]:shadow-[0_0_15px_theme(colors.amber.500/0.4)]"
+      >
+        <input 
+          type="checkbox" 
+          value={category.slug}
+          bind:group={selectedCategories}
+          class="h-4 w-4 rounded-sm appearance-none bg-slate-700 border-2 border-slate-600 
+                 checked:bg-amber-500 checked:border-transparent focus:ring-offset-0 
+                 focus:ring-2 focus:ring-amber-400 transition"
+        />
+        <!-- 🔹 CORREZIONE: Testo sempre bianco e leggibile -->
+        <span class="text-sm font-medium text-slate-300 has-[:checked]:text-white transition-colors">
+          {category.name}
+        </span>
+      </label>
+    {/each}
   </div>
 </header>
 

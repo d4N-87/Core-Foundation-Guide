@@ -4,6 +4,7 @@ import path from 'path';
 import fm from 'front-matter';
 import { error } from '@sveltejs/kit';
 import { marked } from 'marked';
+import { categoryColors, defaultCategoryColor } from '$lib/config';
 
 // --- Funzioni Helper ---
 function slugify(text: string) {
@@ -37,6 +38,7 @@ export interface Post {
   lang: string;
   categorySlug: string;
   categoryName: string;
+  categoryColor: string;
   slug: string;
   title: string;
   excerpt: string;
@@ -68,11 +70,13 @@ export async function getPosts(lang: string): Promise<Post[]> {
       const fileContent = fs.readFileSync(filePath, 'utf-8');
       const { attributes, body } = fm<any>(fileContent);
       const excerptData = attributes.excerpt ? { html: await marked.parse(attributes.excerpt), plain: attributes.excerpt } : await createExcerpt(body);
+      const categorySlug = slugify(categoryName);
 
       allPosts.push({
         lang: lang,
-        categorySlug: slugify(categoryName),
+        categorySlug: categorySlug,
         categoryName: formatCategoryName(categoryName),
+        categoryColor: categoryColors[categorySlug] || defaultCategoryColor,
         slug: file.replace(/\.md$/, ''),
         title: attributes.title || 'Senza Titolo',
         excerpt: excerptData.html,
@@ -106,6 +110,7 @@ export async function getPost(lang: string, categorySlug: string, slug: string):
     lang,
     categorySlug,
     categoryName: formatCategoryName(categoryDirName),
+    categoryColor: categoryColors[categorySlug] || defaultCategoryColor,
     slug,
     title: attributes.title || 'Senza Titolo',
     excerpt: excerptData.html,
