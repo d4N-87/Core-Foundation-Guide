@@ -1,27 +1,50 @@
 <!-- src/routes/[lang]/+page.svelte -->
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import NodeGrid from '$lib/components/NodeGrid.svelte';
+	import ContentIndex from '$lib/components/ContentIndex.svelte';
 	import { goto } from '$app/navigation';
 	import type { Post } from '$lib/server/posts';
 	import { type Language, fallbackTranslations } from '$lib/translations';
 	import { transitionStore } from '$lib/transitionStore';
 	import { gsap } from 'gsap';
+	import { slide } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
 
 	export let data: PageData;
-
-	// 1. Dichiariamo una variabile per mantenere un riferimento al nostro contenitore della griglia
 	let gridWrapperElement: HTMLElement;
+	let isIndexOpen = false;
+	let mapButtonElement: HTMLElement;
 
 	const allPosts = data?.posts ?? [];
+	const postIndex = data?.postIndex ?? [];
 	const lang = data?.lang as Language | undefined;
 	const t = lang && data?.translations ? data.translations[lang] : fallbackTranslations;
 
-	const categories = [...new Set(allPosts.map((p) => p.categorySlug))].map((slug) => ({
-		slug,
-		name: allPosts.find((p) => p.categorySlug === slug)?.categoryName || slug,
-		color: allPosts.find((p) => p.categorySlug === slug)?.categoryColor || 'slate'
-	}));
+	const categoryOrder = ['fundamentals', 'system_anatomy', 'core_concepts', 'advanced_topics'];
+
+	// LA CORREZIONE DEFINITIVA È QUI:
+	// Torniamo alla logica robusta in due passaggi.
+	// 1. Prima, troviamo tutte le categorie uniche che esistono nei post.
+	const categories = [...new Set(allPosts.map((p) => p.categorySlug))]
+		.map((slug) => {
+			// Sappiamo che un post con questo slug esiste, perché lo abbiamo appena estratto.
+			const postInCategory = allPosts.find((p) => p.categorySlug === slug)!;
+			return {
+				slug: slug,
+				name: postInCategory.categoryName,
+				color: postInCategory.categoryColor || 'slate'
+			};
+		})
+		// 2. Poi, ordiniamo questa lista completa e affidabile.
+		.sort((a, b) => {
+			const indexA = categoryOrder.indexOf(a.slug);
+			const indexB = categoryOrder.indexOf(b.slug);
+			if (indexA === -1) return 1;
+			if (indexB === -1) return -1;
+			return indexA - indexB;
+		});
 
 	let searchTerm = '';
 	let selectedCategories: string[] = [];
@@ -40,23 +63,78 @@
 	async function handleCardClick(event: CustomEvent<{ post: Post; element: HTMLElement }>) {
 		const { post, element } = event.detail;
 		if (!lang) return;
-
-		transitionStore.set({
-			rect: element.getBoundingClientRect(),
-			scrollY: window.scrollY
-		});
-
-		// 3. LA CORREZIONE: Ora animiamo la variabile specifica invece di fare una query generica.
-		// Questo garantisce che solo il contenitore della griglia venga reso trasparente.
+		transitionStore.set({ rect: element.getBoundingClientRect(), scrollY: window.scrollY });
 		if (gridWrapperElement) {
 			await gsap.to(gridWrapperElement, { opacity: 0, duration: 0.3 }).then();
 		}
-
 		goto(`/${lang}/${post.categorySlug}/${post.slug}`);
 	}
+
+	function handleIndexClick(event: CustomEvent<string>) {
+		const slug = event.detail;
+		const cardElement = gridWrapperElement?.querySelector(`[data-slug="${slug}"]`);
+		if (cardElement) {
+			cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			gsap.fromTo(
+				cardElement,
+				{
+					boxShadow: '0 0 25px rgba(251, 191, 36, 0.7)',
+					outline: '2px solid rgba(251, 191, 36, 0.8)'
+				},
+				{
+					boxShadow: '0 0 0px rgba(251, 191, 36, 0)',
+					outline: '0px solid rgba(251, 191, 36, 0)',
+					duration: 1.5,
+					ease: 'power2.out'
+				}
+			);
+		}
+	}
+
+	onMount(() => {
+		if (!mapButtonElement) return;
+		const shineElement = mapButtonElement.querySelector('.shine-effect');
+		if (!shineElement) return;
+		const timeline = gsap.timeline({ paused: true });
+		timeline.fromTo(
+			shineElement,
+			{ x: '-110%' },
+			{ x: '110%', duration: 0.5, ease: 'power1.in' }
+		);
+		mapButtonElement.addEventListener('mouseenter', () => timeline.restart());
+	});
 </script>
 
-<section class="mb-8 px-4 pt-8 text-center md:mb-12 md:px-8">
+<div class="pt-8 text-center">
+	<button
+		bind:this={mapButtonElement}
+		on:click={() => (isIndexOpen = !isIndexOpen)}
+		class="relative inline-flex items-center gap-3 overflow-hidden rounded-lg border-2
+           border-slate-700 bg-slate-900/50 px-6 py-3 font-semibold text-slate-300
+           transition-colors hover:border-amber-400 hover:text-white"
+	>
+		<span
+			class="shine-effect absolute inset-0 -skew-x-[15deg] bg-gradient-to-r from-transparent via-white/30 to-transparent"
+		></span>
+		<span class="relative inline-flex items-center gap-3">
+			{#if isIndexOpen}
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+				<span>{t.hideMap}</span>
+			{:else}
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" /><line x1="8" x2="8" y1="2" y2="18" /><line x1="16" x2="16" y1="6" y2="22" /></svg>
+				<span>{t.showMap}</span>
+			{/if}
+		</span>
+	</button>
+</div>
+
+{#if isIndexOpen}
+	<div class="pt-8" transition:slide={{ duration: 400, easing: quintOut }}>
+		<ContentIndex {postIndex} on:indexclick={handleIndexClick} />
+	</div>
+{/if}
+
+<section class="px-4 pt-8 text-center md:mb-6">
 	<div class="mx-auto max-w-lg">
 		<input
 			type="text"
@@ -65,11 +143,10 @@
 			class="w-full rounded-lg border-2 border-slate-700 bg-slate-900/50 px-4 py-2 text-white placeholder-slate-500 transition-all focus:outline-none focus:ring-2 focus:ring-cyan-400"
 		/>
 	</div>
-
 	<div class="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-3">
 		{#each categories as category}
 			<label
-				class="flex cursor-pointer items-center gap-2 rounded-lg border-2 border-transparent p-2 transition-all hover:bg-slate-800/50 has-[:checked]:border-amber-500 has-[:checked]:bg-amber-900/30 has-[:checked]:shadow-[0_0_15px_theme(colors.amber.500/0.4)]"
+				class="flex cursor-pointer items-center gap-2 rounded-lg border-2 border-transparent p-2 transition-all hover:bg-slate-800/50 has[:checked]:border-amber-500 has-[:checked]:bg-amber-900/30 has-[:checked]:shadow-[0_0_15px_theme(colors.amber.500/0.4)]"
 			>
 				<input
 					type="checkbox"
@@ -77,9 +154,7 @@
 					bind:group={selectedCategories}
 					class="h-4 w-4 appearance-none rounded-sm border-2 border-slate-600 bg-slate-700 transition checked:border-transparent checked:bg-amber-500 focus:ring-2 focus:ring-amber-400 focus:ring-offset-0"
 				/>
-				<span
-					class="text-sm font-medium text-slate-300 transition-colors has-[:checked]:text-white"
-				>
+				<span class="text-sm font-medium text-slate-300 transition-colors has-[:checked]:text-white">
 					{category.name}
 				</span>
 			</label>
@@ -87,10 +162,8 @@
 	</div>
 </section>
 
-<!-- 2. Usiamo bind:this per legare l'elemento DOM alla nostra variabile -->
 <div bind:this={gridWrapperElement} class="mx-auto max-w-7xl px-4 pb-12">
 	<NodeGrid posts={filteredPosts} on:cardclick={handleCardClick} />
-
 	{#if filteredPosts.length === 0 && allPosts.length > 0}
 		<p class="mt-8 text-center text-slate-500">{t.noPostsFound}</p>
 	{/if}
