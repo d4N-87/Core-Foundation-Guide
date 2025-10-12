@@ -4,22 +4,24 @@ import type { PageServerLoad } from './$types';
 import { marked } from 'marked';
 import { error } from '@sveltejs/kit';
 
-// Funzione helper per creare un estratto pulito per la meta description
-function generateExcerpt(content: string, maxLength = 155): string {
-	// Rimuove i tag HTML, i link markdown, e accorcia il testo
-	const plainText = content
-		.replace(/<[^>]*>/g, '') // Rimuove tag HTML
-		.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Converte [testo](link) in "testo"
-		.replace(/\s+/g, ' ') // Normalizza gli spazi
-		.trim();
+function htmlToPlainText(html: string): string {
+	return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
 
-	if (plainText.length <= maxLength) {
-		return plainText;
-	}
-
-	// Accorcia e aggiunge "..." senza tagliare una parola a metà
-	const trimmed = plainText.substring(0, maxLength);
-	return trimmed.substring(0, Math.min(trimmed.length, trimmed.lastIndexOf(' '))) + '...';
+function cleanTextForSpeech(markdown: string): string {
+	return (
+		markdown
+			.replace(/---[\s\S]*?---/, '')
+			.replace(/\[\d+\]/g, '')
+			.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))
+			.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+			.replace(/(\*\*|\*|_)/g, '')
+			// LA CORREZIONE È QUI:
+			// Sostituiamo i titoli (da 1 a 6 cancelletti) con un punto e virgola per suggerire una pausa.
+			.replace(/^[#]{1,6}\s+(.*)/gm, '$1;')
+			.replace(/\s+/g, ' ')
+			.trim()
+	);
 }
 
 export const load: PageServerLoad = async ({ params, parent }) => {
@@ -36,24 +38,22 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 		throw error(404, 'Not Found');
 	}
 
-	// LA CORREZIONE È QUI:
-	// Prepariamo i dati SEO, gestendo il caso in cui 'post.content' sia undefined.
+	const markdownContent = post.content || '';
+	const htmlContent = await marked.parse(markdownContent);
+	const cleanText = cleanTextForSpeech(markdownContent);
+	const textContent = `${post.title}. ${cleanText}`;
+
 	const seo = {
 		title: post.title,
-		// Se 'post.excerpt' esiste, usalo. Altrimenti, genera l'estratto solo se 'post.content' esiste.
-		// Se entrambi sono assenti, usa una stringa vuota come fallback sicuro.
-		description: post.excerpt || (post.content ? generateExcerpt(post.content) : '')
+		description: post.excerpt || htmlToPlainText(htmlContent).substring(0, 155)
 	};
 
-	// E ANCHE QUI:
-	// Convertiamo il contenuto del post in HTML solo se esiste.
-	if (post.content) {
-		post.content = await marked.parse(post.content);
-	}
+	post.content = htmlContent;
 
 	return {
 		post,
 		translations,
-		seo
+		seo,
+		textContent
 	};
 };

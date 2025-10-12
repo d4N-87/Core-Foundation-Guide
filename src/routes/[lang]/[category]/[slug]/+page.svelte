@@ -7,12 +7,14 @@
 	import type { PageData } from './$types';
 	import { type Language, fallbackTranslations } from '$lib/translations';
 	import SEO from '$lib/components/SEO.svelte';
+	import SpeechControl from '$lib/components/SpeechControl.svelte';
 
 	export let data: PageData;
 
 	const post = data.post;
 	const translations = data.translations;
 	const seo = data.seo;
+	const textContent = data.textContent;
 
 	const lang = post?.lang as Language;
 	const t = lang && translations ? translations[lang] : fallbackTranslations;
@@ -113,6 +115,14 @@
 				class="prose prose-invert prose-strong:text-amber-400 prose-hr:border-cyan-500/30 prose-ol:text-gray-400 lg:prose-xl"
 			>
 				<h1>{post.title}</h1>
+
+				{#if textContent}
+					<div class="not-prose my-8">
+						<!-- Passiamo anche l'oggetto 't' per le traduzioni -->
+						<SpeechControl text={textContent} lang={post.lang} {t} />
+					</div>
+				{/if}
+
 				{@html post.content}
 
 				{#if post.sources && post.sources.length > 0}

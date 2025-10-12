@@ -14,9 +14,13 @@ export const translations = {
 		backToArticles: 'Torna agli articoli',
 		sources: 'Fonti',
 		searchPlaceholder: 'Cerca articoli...',
-		// NUOVE CHIAVI
 		showMap: 'Mostra Mappa Contenuti',
-		hideMap: 'Nascondi Mappa'
+		hideMap: 'Nascondi Mappa',
+		// NUOVE CHIAVI PER IL PLAYER AUDIO
+		listenToArticle: 'Ascolta questo articolo',
+		playing: 'In riproduzione...',
+		paused: 'In pausa',
+		voice: 'Voce'
 	},
 	en: {
 		category: 'Category',
@@ -28,12 +32,17 @@ export const translations = {
 		backToArticles: 'Back to articles',
 		sources: 'Sources',
 		searchPlaceholder: 'Search articles...',
-		// NUOVE CHIAVI
 		showMap: 'Show Content Map',
-		hideMap: 'Hide Map'
+		hideMap: 'Hide Map',
+		// NUOVE CHIAVI PER IL PLAYER AUDIO
+		listenToArticle: 'Listen to this article',
+		playing: 'Playing...',
+		paused: 'Paused',
+		voice: 'Voice'
 	}
 };
 
+// Aggiungiamo le nuove chiavi anche al fallback
 export const fallbackTranslations: TranslationSet = {
 	category: 'Category',
 	connections: 'Connections',
@@ -44,7 +53,10 @@ export const fallbackTranslations: TranslationSet = {
 	backToArticles: 'Back to articles',
 	sources: 'Sources',
 	searchPlaceholder: 'Search articles...',
-	// NUOVE CHIAVI
 	showMap: 'Show Content Map',
-	hideMap: 'Hide Map'
+	hideMap: 'Hide Map',
+	listenToArticle: 'Listen to this article',
+	playing: 'Playing...',
+	paused: 'Paused',
+	voice: 'Voice'
 };
