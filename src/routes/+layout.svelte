@@ -3,19 +3,30 @@
 	import '../app.css';
 	import NeuralBackground from '$lib/components/NeuralBackground.svelte';
 	import Header from '$lib/components/Header.svelte';
+	import Footer from '$lib/components/Footer.svelte';
 </script>
 
 <NeuralBackground />
 
-<!-- L'Header ora è un elemento a sé stante, fuori dal flusso principale -->
-<Header />
-
-<!--
-  LA MODIFICA CHIAVE:
-  - Rimosso il div contenitore con 'flex-col'.
-  - Aggiunta la classe 'pt-20' a <main> per creare spazio per l'header fisso.
-    L'altezza dell'header è circa 4rem, pt-20 (5rem) dà un po' di respiro.
+<!-- 
+  LA CORREZIONE È QUI:
+  - Abbiamo ripristinato la struttura precedente che si è dimostrata robusta.
+  - L'header è un elemento a sé stante.
+  - Il 'main' ha di nuovo il 'padding-top' necessario per creare spazio per l'header fisso.
 -->
-<main class="relative z-10 isolate pt-20">
-	<slot />
-</main>
+<div class="relative z-10 isolate">
+	<Header />
+
+	<!-- 
+    Il 'min-h-screen' qui assicura che il contenitore del contenuto occupi almeno
+    l'intera altezza dello schermo, spingendo il footer in fondo.
+    'flex' e 'flex-col' sono necessari per far funzionare 'flex-grow'.
+  -->
+	<div class="flex min-h-screen flex-col pt-20">
+		<main class="flex-grow">
+			<slot />
+		</main>
+
+		<Footer />
+	</div>
+</div>

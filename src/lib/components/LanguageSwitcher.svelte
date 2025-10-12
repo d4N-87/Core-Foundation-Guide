@@ -5,7 +5,7 @@
 	import { translations } from '$lib/translations';
 	import { fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-	import { browser } from '$app/environment'; // 1. Importiamo il flag 'browser'
+	import { browser } from '$app/environment';
 
 	const languageNames: Record<string, string> = {
 		it: 'Italiano',
@@ -33,7 +33,6 @@
 		}
 	}
 
-	// 2. LA CORREZIONE: Eseguiamo questo codice solo nel browser
 	if (browser) {
 		onMount(() => {
 			window.addEventListener('click', handleClickOutside);
@@ -63,20 +62,19 @@
 	</button>
 
 	{#if isOpen}
+		<!-- 
+      LA CORREZIONE È QUI:
+      - Rimosse le classi 'bg-gradient-to-br', 'from-*', 'to-*' e 'backdrop-blur-lg'.
+      - Aggiunta la classe 'bg-slate-950' per uno sfondo solido e opaco.
+    -->
 		<div
 			class="absolute top-full right-0 mt-3 w-40 origin-top-right rounded-lg border border-cyan-900/50
-                   bg-gradient-to-br from-cyan-950/20 to-slate-950/10
-                   backdrop-blur-lg p-2 shadow-2xl shadow-black/50"
+                   bg-slate-950 p-2 shadow-2xl shadow-black/50"
 			transition:fly={{ y: -10, duration: 200, easing: quintOut }}
 		>
 			<ul class="space-y-1">
 				{#each availableLanguages as lang}
 					<li>
-						<!-- 
-              3. CORREZIONE SECONDARIA:
-              - Aggiunto 'data-sveltekit-reload' per forzare un ricaricamento completo della pagina.
-              Questo è più robusto per il cambio lingua, assicurando che tutti i dati vengano ricaricati.
-            -->
 						<a
 							href={getLanguageUrl(lang.code)}
 							data-sveltekit-reload

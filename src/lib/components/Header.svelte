@@ -2,10 +2,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
-	import LanguageSwitcher from './LanguageSwitcher.svelte'; // 1. Importiamo il nuovo componente
+	import LanguageSwitcher from './LanguageSwitcher.svelte';
 
 	const githubUrl = '#';
-	const title = 'CORE FOUNDATION GUIDE';
+	const title = 'CORE FOUNDATION GUIDE'; // Già in maiuscolo
 	const titleChars = title.split('');
 	const highlightedChars = ['C', 'F', 'G'];
 
@@ -79,10 +79,8 @@
 	bind:this={headerElement}
 	class="fixed left-0 right-0 top-0 z-[60] w-full border-b border-cyan-900/50 bg-black/30 px-4 py-3 backdrop-blur-md md:px-8"
 >
-	<!-- 2. MODIFICA LAYOUT: Aggiunto 'justify-between' per spaziare gli elementi -->
 	<div class="mx-auto flex max-w-7xl items-center justify-between">
-		<!-- Contenitore per gli elementi di sinistra (logo e titolo) -->
-		<div class="flex items-center">
+		<div class="flex flex-shrink-0 items-center">
 			<a
 				href={githubUrl}
 				target="_blank"
@@ -90,10 +88,21 @@
 				aria-label="Core Foundation Guide GitHub Repository"
 				class="transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_theme(colors.amber.400)] focus:scale-110 focus:outline-none"
 			>
-				<img src="/logo.webp" alt="Logo" class="h-12 w-12 md:h-14 md:w-14" />
+				<!-- Ridimensionato leggermente il logo per un miglior bilanciamento -->
+				<img src="/logo.webp" alt="Logo" class="h-10 w-10 md:h-12 md:w-12" />
 			</a>
 
-			<div class="ml-5 text-3xl font-bold tracking-wide text-slate-200 md:ml-6 md:text-4xl">
+			<!-- 
+        LA CORREZIONE È QUI:
+        - 'text-xl': Dimensione di base per mobile.
+        - 'sm:text-2xl': Dimensione per schermi piccoli.
+        - 'md:text-3xl': Dimensione per schermi medi.
+        - 'lg:text-4xl': Dimensione per schermi grandi.
+        - 'min-w-0': Correzione per evitare che il titolo "spinga" via il selettore lingua su schermi stretti.
+      -->
+			<div
+				class="ml-3 min-w-0 text-xl font-bold tracking-wide text-slate-200 sm:ml-4 sm:text-2xl md:ml-6 md:text-3xl lg:text-4xl"
+			>
 				{#each titleChars as char}
 					{#if char === ' '}
 						<span class="char-span">&nbsp;</span>
@@ -110,7 +119,6 @@
 			</div>
 		</div>
 
-		<!-- 3. Inseriamo il selettore di lingua qui, all'estrema destra -->
 		<LanguageSwitcher />
 	</div>
 </header>
