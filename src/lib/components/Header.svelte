@@ -2,9 +2,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
+	import LanguageSwitcher from './LanguageSwitcher.svelte'; // 1. Importiamo il nuovo componente
 
 	const githubUrl = '#';
-	const title = 'Core Foundation Guide';
+	const title = 'CORE FOUNDATION GUIDE';
 	const titleChars = title.split('');
 	const highlightedChars = ['C', 'F', 'G'];
 
@@ -36,6 +37,7 @@
 
 		const chars = gsap.utils.toArray<HTMLElement>('.char-span:not(.char-highlighted)');
 		const amberColor = '#fbbF24';
+		const baseColor = '#e2e8f0';
 
 		const ctx = gsap.context(() => {
 			headerElement.addEventListener('mousemove', (e) => {
@@ -52,7 +54,7 @@
 
 					gsap.to(char, {
 						textShadow: `0 0 10px rgba(251, 191, 36, ${proximity * 0.8})`,
-						color: proximity > 0.5 ? amberColor : '#e2e8f0',
+						color: proximity > 0.5 ? amberColor : baseColor,
 						duration: 0.3,
 						ease: 'power2.out'
 					});
@@ -62,7 +64,7 @@
 			headerElement.addEventListener('mouseleave', () => {
 				gsap.to(chars, {
 					textShadow: '0 0 10px rgba(251, 191, 36, 0)',
-					color: '#e2e8f0',
+					color: baseColor,
 					duration: 0.4,
 					ease: 'power2.out'
 				});
@@ -77,32 +79,38 @@
 	bind:this={headerElement}
 	class="fixed left-0 right-0 top-0 z-[60] w-full border-b border-cyan-900/50 bg-black/30 px-4 py-3 backdrop-blur-md md:px-8"
 >
-	<div class="mx-auto flex max-w-7xl items-center justify-center">
-		<a
-			href={githubUrl}
-			target="_blank"
-			rel="noopener noreferrer"
-			aria-label="Core Foundation Guide GitHub Repository"
-			class="transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_theme(colors.amber.400)] focus:scale-110 focus:outline-none"
-		>
-			<img src="/logo.webp" alt="Logo" class="h-12 w-12 md:h-14 md:w-14" />
-		</a>
+	<!-- 2. MODIFICA LAYOUT: Aggiunto 'justify-between' per spaziare gli elementi -->
+	<div class="mx-auto flex max-w-7xl items-center justify-between">
+		<!-- Contenitore per gli elementi di sinistra (logo e titolo) -->
+		<div class="flex items-center">
+			<a
+				href={githubUrl}
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label="Core Foundation Guide GitHub Repository"
+				class="transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_theme(colors.amber.400)] focus:scale-110 focus:outline-none"
+			>
+				<img src="/logo.webp" alt="Logo" class="h-12 w-12 md:h-14 md:w-14" />
+			</a>
 
-		<div class="ml-5 text-3xl font-bold tracking-wide text-slate-200 md:ml-6 md:text-4xl">
-			{#each titleChars as char}
-				{#if char === ' '}
-					<span class="char-span">&nbsp;</span>
-				{:else}
-					<span
-						class="char-span inline-block {highlightedChars.includes(char)
-							? 'text-amber-400 char-highlighted'
-							: ''}"
-					>
-						{char}
-					</span>
-				<!-- LA CORREZIONE È QUI: Cambiato '{if}' in '{/if}' -->
-				{/if}
-			{/each}
+			<div class="ml-5 text-3xl font-bold tracking-wide text-slate-200 md:ml-6 md:text-4xl">
+				{#each titleChars as char}
+					{#if char === ' '}
+						<span class="char-span">&nbsp;</span>
+					{:else}
+						<span
+							class="char-span inline-block {highlightedChars.includes(char)
+								? 'text-amber-400 char-highlighted'
+								: ''}"
+						>
+							{char}
+						</span>
+					{/if}
+				{/each}
+			</div>
 		</div>
+
+		<!-- 3. Inseriamo il selettore di lingua qui, all'estrema destra -->
+		<LanguageSwitcher />
 	</div>
 </header>
