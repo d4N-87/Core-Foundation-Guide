@@ -11,6 +11,7 @@
 	import { gsap } from 'gsap';
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
+	import SEO from '$lib/components/SEO.svelte';
 
 	export let data: PageData;
 	let gridWrapperElement: HTMLElement;
@@ -24,12 +25,8 @@
 
 	const categoryOrder = ['fundamentals', 'system_anatomy', 'core_concepts', 'advanced_topics'];
 
-	// LA CORREZIONE DEFINITIVA È QUI:
-	// Torniamo alla logica robusta in due passaggi.
-	// 1. Prima, troviamo tutte le categorie uniche che esistono nei post.
 	const categories = [...new Set(allPosts.map((p) => p.categorySlug))]
 		.map((slug) => {
-			// Sappiamo che un post con questo slug esiste, perché lo abbiamo appena estratto.
 			const postInCategory = allPosts.find((p) => p.categorySlug === slug)!;
 			return {
 				slug: slug,
@@ -37,7 +34,6 @@
 				color: postInCategory.categoryColor || 'slate'
 			};
 		})
-		// 2. Poi, ordiniamo questa lista completa e affidabile.
 		.sort((a, b) => {
 			const indexA = categoryOrder.indexOf(a.slug);
 			const indexB = categoryOrder.indexOf(b.slug);
@@ -104,6 +100,11 @@
 		mapButtonElement.addEventListener('mouseenter', () => timeline.restart());
 	});
 </script>
+
+<SEO
+	title="Home"
+	description="Core Foundation Guide: un manuale interattivo e una guida di riferimento per i concetti fondamentali dell'intelligenza artificiale."
+/>
 
 <div class="pt-8 text-center">
 	<button

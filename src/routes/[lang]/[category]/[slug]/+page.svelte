@@ -2,15 +2,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { transitionStore, type TransitionData } from '$lib/transitionStore';
+	import { transitionStore } from '$lib/transitionStore';
 	import { gsap } from 'gsap';
 	import type { PageData } from './$types';
 	import { type Language, fallbackTranslations } from '$lib/translations';
+	import SEO from '$lib/components/SEO.svelte';
 
 	export let data: PageData;
 
 	const post = data.post;
 	const translations = data.translations;
+	const seo = data.seo;
 
 	const lang = post?.lang as Language;
 	const t = lang && translations ? translations[lang] : fallbackTranslations;
@@ -71,25 +73,24 @@
 			return;
 		}
 
-		await gsap.to(articleWrapper, {
-			top: startRect.top,
-			left: startRect.left,
-			width: startRect.width,
-			height: startRect.height,
-			duration: 0.4,
-			ease: 'power3.inOut',
-			autoAlpha: 0
-		}).then();
+		await gsap
+			.to(articleWrapper, {
+				top: startRect.top,
+				left: startRect.left,
+				width: startRect.width,
+				height: startRect.height,
+				duration: 0.4,
+				ease: 'power3.inOut',
+				autoAlpha: 0
+			})
+			.then();
 
 		await goto(`/${targetLang}`);
 	}
 </script>
 
-<!--
-  LA CORREZIONE È QUI:
-  - Rimosso 'min-h-screen' per evitare conflitti con il layout globale.
-  - Aggiunto 'flex-grow' per far sì che questo contenitore riempia lo spazio disponibile in <main>.
--->
+<SEO title={seo.title} description={seo.description} />
+
 <div class="flex w-full flex-grow items-center justify-center p-4 md:p-8">
 	<div
 		bind:this={articleWrapper}

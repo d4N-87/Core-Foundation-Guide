@@ -25,35 +25,36 @@
 		categoryPanels.forEach((panel) => {
 			if (!panel) return;
 
-			const rect = panel.querySelector<SVGRectElement>('.glow-rect');
-			if (!rect) return;
+			// LA CORREZIONE È QUI:
+			// Eseguiamo la logica solo se il pannello è effettivamente visibile a schermo.
+			// 'clientWidth' è > 0 solo per gli elementi renderizzati.
+			if (panel.clientWidth > 0) {
+				const rect = panel.querySelector<SVGRectElement>('.glow-rect');
+				if (!rect) return;
 
-			const length = rect.getTotalLength();
-			const impulseLength = length * 0.25;
+				const length = rect.getTotalLength();
+				const impulseLength = length * 0.25;
 
-			// LA LOGICA DI ANIMAZIONE DEFINITIVA E CORRETTA
-			// 1. Definiamo il pattern: un impulso visibile e un buco invisibile.
-			gsap.set(rect, {
-				strokeDasharray: `${impulseLength} ${length - impulseLength}`,
-				opacity: 0
-			});
+				gsap.set(rect, {
+					strokeDasharray: `${impulseLength} ${length}`,
+					strokeDashoffset: impulseLength,
+					opacity: 0
+				});
 
-			// 2. Creiamo un'animazione 'from' che si ripete all'infinito.
-			// Anima lo strokeDashoffset da 'length' a '0'.
-			const animation = gsap.from(rect, {
-				strokeDashoffset: length,
-				duration: 2.5,
-				ease: 'none',
-				repeat: -1
-			});
+				gsap.from(rect, {
+					strokeDashoffset: length,
+					duration: 2.5,
+					ease: 'none',
+					repeat: -1
+				});
 
-			// 3. Controlliamo solo l'opacità con gli eventi del mouse.
-			panel.addEventListener('mouseenter', () => {
-				gsap.to(rect, { opacity: 1, duration: 0.3 });
-			});
-			panel.addEventListener('mouseleave', () => {
-				gsap.to(rect, { opacity: 0, duration: 0.3 });
-			});
+				panel.addEventListener('mouseenter', () => {
+					gsap.to(rect, { opacity: 1, duration: 0.3 });
+				});
+				panel.addEventListener('mouseleave', () => {
+					gsap.to(rect, { opacity: 0, duration: 0.3 });
+				});
+			}
 		});
 	});
 </script>
