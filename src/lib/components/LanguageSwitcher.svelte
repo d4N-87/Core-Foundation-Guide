@@ -7,9 +7,14 @@
 	import { quintOut } from 'svelte/easing';
 	import { browser } from '$app/environment';
 
+	// LA CORREZIONE È QUI: Aggiunti i nomi completi per tutte le lingue
 	const languageNames: Record<string, string> = {
 		it: 'Italiano',
-		en: 'English'
+		en: 'English',
+		fr: 'Français',
+		es: 'Español',
+		de: 'Deutsch',
+		pt: 'Português'
 	};
 
 	const availableLanguages = Object.keys(translations).map((code) => ({
@@ -23,8 +28,13 @@
 	function getLanguageUrl(newLang: string): string {
 		const currentPathname = $page.url.pathname;
 		const parts = currentPathname.split('/');
-		parts[1] = newLang;
-		return parts.join('/');
+		// Assicurati che il percorso abbia almeno la parte della lingua
+		if (parts.length > 1) {
+			parts[1] = newLang;
+			return parts.join('/');
+		}
+		// Fallback per la root, anche se non dovrebbe succedere con la nostra struttura
+		return `/${newLang}`;
 	}
 
 	function handleClickOutside(event: MouseEvent) {
@@ -62,11 +72,6 @@
 	</button>
 
 	{#if isOpen}
-		<!-- 
-      LA CORREZIONE È QUI:
-      - Rimosse le classi 'bg-gradient-to-br', 'from-*', 'to-*' e 'backdrop-blur-lg'.
-      - Aggiunta la classe 'bg-slate-950' per uno sfondo solido e opaco.
-    -->
 		<div
 			class="absolute top-full right-0 mt-3 w-40 origin-top-right rounded-lg border border-cyan-900/50
                    bg-slate-950 p-2 shadow-2xl shadow-black/50"

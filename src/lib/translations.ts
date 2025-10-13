@@ -16,7 +16,6 @@ export const translations = {
 		searchPlaceholder: 'Cerca articoli...',
 		showMap: 'Mostra Mappa Contenuti',
 		hideMap: 'Nascondi Mappa',
-		// NUOVE CHIAVI PER IL PLAYER AUDIO
 		listenToArticle: 'Ascolta questo articolo',
 		playing: 'In riproduzione...',
 		paused: 'In pausa',
@@ -34,15 +33,83 @@ export const translations = {
 		searchPlaceholder: 'Search articles...',
 		showMap: 'Show Content Map',
 		hideMap: 'Hide Map',
-		// NUOVE CHIAVI PER IL PLAYER AUDIO
 		listenToArticle: 'Listen to this article',
 		playing: 'Playing...',
 		paused: 'Paused',
 		voice: 'Voice'
+	},
+	fr: {
+		category: 'Catégorie',
+		connections: 'Connexions',
+		backToHub: "Retour à l'accueil",
+		noPostsFound: 'Aucun article trouvé.',
+		pageTitleCategory: 'Catégorie',
+		initializing: 'Initialisation...',
+		backToArticles: 'Retour aux articles',
+		sources: 'Sources',
+		searchPlaceholder: 'Rechercher des articles...',
+		showMap: 'Afficher la carte du contenu',
+		hideMap: 'Masquer la carte',
+		listenToArticle: 'Écouter cet article',
+		playing: 'Lecture en cours...',
+		paused: 'En pause',
+		voice: 'Voix'
+	},
+	es: {
+		category: 'Categoría',
+		connections: 'Conexiones',
+		backToHub: 'Volver al inicio',
+		noPostsFound: 'No se encontraron artículos.',
+		pageTitleCategory: 'Categoría',
+		initializing: 'Inicializando...',
+		backToArticles: 'Volver a los artículos',
+		sources: 'Fuentes',
+		searchPlaceholder: 'Buscar artículos...',
+		showMap: 'Mostrar mapa de contenido',
+		hideMap: 'Ocultar mapa',
+		listenToArticle: 'Escuchar este artículo',
+		playing: 'Reproduciendo...',
+		paused: 'En pausa',
+		voice: 'Voz'
+	},
+	de: {
+		category: 'Kategorie',
+		connections: 'Verbindungen',
+		backToHub: 'Zurück zum Hub',
+		noPostsFound: 'Keine Artikel gefunden.',
+		pageTitleCategory: 'Kategorie',
+		initializing: 'Initialisiere...',
+		backToArticles: 'Zurück zu den Artikeln',
+		sources: 'Quellen',
+		searchPlaceholder: 'Artikel suchen...',
+		showMap: 'Inhaltsverzeichnis anzeigen',
+		hideMap: 'Verzeichnis ausblenden',
+		listenToArticle: 'Diesen Artikel anhören',
+		playing: 'Wiedergabe...',
+		paused: 'Pausiert',
+		voice: 'Stimme'
+	},
+	// --- NUOVA SEZIONE ---
+	pt: {
+		category: 'Categoria',
+		connections: 'Conexões',
+		backToHub: 'Voltar ao início',
+		noPostsFound: 'Nenhum artigo encontrado.',
+		pageTitleCategory: 'Categoria',
+		initializing: 'Inicializando...',
+		backToArticles: 'Voltar aos artigos',
+		sources: 'Fontes',
+		searchPlaceholder: 'Pesquisar artigos...',
+		showMap: 'Mostrar mapa de conteúdo',
+		hideMap: 'Ocultar mapa',
+		listenToArticle: 'Ouvir este artigo',
+		playing: 'Reproduzindo...',
+		paused: 'Em pausa',
+		voice: 'Voz'
 	}
 };
 
-// Aggiungiamo le nuove chiavi anche al fallback
+// Il fallback rimane in inglese, non c'è bisogno di modificarlo
 export const fallbackTranslations: TranslationSet = {
 	category: 'Category',
 	connections: 'Connections',
