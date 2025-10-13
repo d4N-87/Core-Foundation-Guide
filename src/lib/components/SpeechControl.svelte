@@ -4,30 +4,40 @@
 	import { browser } from '$app/environment';
 	import { type TranslationSet } from '$lib/translations';
 
-	export let text: string;
-	export let lang: string;
-	export let t: TranslationSet;
+	// English: Component props.
+	// Italiano: Prop del componente.
+	export let text: string; // English: The article text to be spoken. / Italiano: Il testo dell'articolo da leggere.
+	export let lang: string; // English: The language code for voice filtering. / Italiano: Il codice della lingua per filtrare le voci.
+	export let t: TranslationSet; // English: The translation object for UI labels. / Italiano: L'oggetto di traduzione per le etichette dell'interfaccia.
 
 	let synth: SpeechSynthesis;
 	let utterance: SpeechSynthesisUtterance;
 
-	let isSupported = false;
-	let isSpeaking = false;
-	let showSettings = false;
+	// English: Component's internal state.
+	// Italiano: Stato interno del componente.
+	let isSupported = false; // English: True if the browser supports Web Speech API. / Italiano: True se il browser supporta la Web Speech API.
+	let isSpeaking = false; // English: True if audio is currently playing. / Italiano: True se l'audio è in riproduzione.
+	let showSettings = false; // English: Toggles the voice selection panel. / Italiano: Controlla la visibilità del pannello di selezione voce.
 
 	let availableVoices: SpeechSynthesisVoice[] = [];
 	let selectedVoiceURI: string | null = null;
 
+	// English: Initializes the SpeechSynthesis API if available in the browser.
+	// Italiano: Inizializza l'API SpeechSynthesis se disponibile nel browser.
 	function initialize() {
 		if (!browser || !('speechSynthesis' in window)) return;
 		isSupported = true;
 		synth = window.speechSynthesis;
 	}
 
+	// English: Fetches and filters the list of available voices based on the article's language.
+	// Italiano: Recupera e filtra l'elenco delle voci disponibili in base alla lingua dell'articolo.
 	function populateVoiceList() {
 		const voices = synth.getVoices();
 		availableVoices = voices.filter((voice) => voice.lang.startsWith(lang));
 
+		// English: If no voice is selected, try to find a preferred one or default to the first available.
+		// Italiano: Se nessuna voce è selezionata, prova a trovarne una preferita o imposta la prima disponibile.
 		if (!selectedVoiceURI && availableVoices.length > 0) {
 			const keywords = ['natural', 'online', 'google'];
 			let preferredVoice = availableVoices.find((v) =>
@@ -37,6 +47,8 @@
 		}
 	}
 
+	// English: Creates a new utterance object with the current text and settings.
+	// Italiano: Crea un nuovo oggetto "utterance" con il testo e le impostazioni correnti.
 	function createUtterance() {
 		utterance = new SpeechSynthesisUtterance(text);
 		utterance.lang = lang;
@@ -49,6 +61,8 @@
 		utterance.pitch = 1;
 		utterance.rate = 1;
 
+		// English: Update the speaking state when the utterance starts or ends.
+		// Italiano: Aggiorna lo stato di riproduzione quando la lettura inizia o finisce.
 		utterance.onstart = () => {
 			isSpeaking = true;
 		};
@@ -57,36 +71,47 @@
 		};
 	}
 
+	// English: Starts or resumes playback.
+	// Italiano: Avvia o riprende la riproduzione.
 	function handlePlay() {
-		isSpeaking = true; // Imposta lo stato immediatamente
-		synth.cancel();
+		isSpeaking = true; // English: Set state immediately for responsive UI. / Italiano: Imposta lo stato immediatamente per un'interfaccia reattiva.
+		synth.cancel(); // English: Cancel any previous speech. / Italiano: Annulla eventuali letture precedenti.
 		createUtterance();
 		synth.speak(utterance);
 	}
 
+	// English: Stops playback.
+	// Italiano: Interrompe la riproduzione.
 	function handleStop() {
-		isSpeaking = false; // Imposta lo stato immediatamente
+		isSpeaking = false; // English: Set state immediately. / Italiano: Imposta lo stato immediatamente.
 		synth.cancel();
 	}
 
 	onMount(() => {
 		initialize();
 		if (isSupported) {
+			// English: Voices are often loaded asynchronously, so we listen for this event.
+			// Italiano: Le voci sono spesso caricate in modo asincrono, quindi ascoltiamo questo evento.
 			synth.onvoiceschanged = populateVoiceList;
-			populateVoiceList();
+			populateVoiceList(); // English: Also call it once in case they are already available. / Italiano: La chiamo anche una volta nel caso siano già disponibili.
 		}
 	});
 
+	// English: Ensure speech is stopped when the component is unmounted to prevent memory leaks.
+	// Italiano: Assicura che la riproduzione venga interrotta quando il componente viene smontato per evitare memory leak.
 	onDestroy(() => {
 		if (synth) synth.cancel();
 	});
 
+	// English: Reactive statement to stop playback if the text prop changes.
+	// Italiano: Dichiarazione reattiva per fermare la riproduzione se la prop 'text' cambia.
 	$: if (text && browser && isSupported) {
 		handleStop();
 	}
 </script>
 
-<!-- Icone SVG (rimossa 'icon-pause') -->
+<!-- English: SVG icons defined for use in the component's UI. -->
+<!-- Italiano: Icone SVG definite per l'uso nell'interfaccia del componente. -->
 <svg class="hidden">
 	<symbol id="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></symbol>
 	<symbol id="icon-stop" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z" /></symbol>
@@ -98,7 +123,8 @@
 
 {#if isSupported}
 	<div class="space-y-3 rounded-lg border border-cyan-900/50 bg-slate-900/30 p-4 backdrop-blur-sm">
-		<!-- Controlli Principali Semplificati -->
+		<!-- English: Main playback controls. -->
+		<!-- Italiano: Controlli di riproduzione principali. -->
 		<div class="flex items-center gap-4">
 			{#if !isSpeaking}
 				<button on:click={handlePlay} aria-label="Play" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500 text-slate-900 transition-transform hover:scale-110"><svg class="h-6 w-6"><use href="#icon-play" /></svg></button>
@@ -114,12 +140,15 @@
 				{/if}
 			</div>
 
+			<!-- English: Only show the settings button if there is more than one voice to choose from. -->
+			<!-- Italiano: Mostra il pulsante delle impostazioni solo se c'è più di una voce tra cui scegliere. -->
 			{#if availableVoices.length > 1}
 				<button on:click={() => (showSettings = !showSettings)} aria-label="Audio settings" class="ml-auto shrink-0 text-slate-400 transition-colors hover:text-white"><svg class="h-6 w-6"><use href="#icon-settings" /></svg></button>
 			{/if}
 		</div>
 
-		<!-- Pannello Impostazioni -->
+		<!-- English: Settings panel for voice selection. -->
+		<!-- Italiano: Pannello delle impostazioni per la selezione della voce. -->
 		{#if showSettings && availableVoices.length > 1}
 			<div class="space-y-2 border-t border-cyan-900/50 pt-3">
 				<div>

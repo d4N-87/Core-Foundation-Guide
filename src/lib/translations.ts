@@ -1,8 +1,18 @@
 // src/lib/translations.ts
 
+// English: This file centralizes all UI string translations for the application.
+// Italiano: Questo file centralizza tutte le traduzioni delle stringhe dell'interfaccia utente per l'applicazione.
+
+// English: Defines a type for the supported language codes (e.g., 'it', 'en'), derived from the keys of the main translations object.
+// Italiano: Definisce un tipo per i codici delle lingue supportate (es. 'it', 'en'), derivato dalle chiavi dell'oggetto principale delle traduzioni.
 export type Language = keyof typeof translations;
+
+// English: Defines the type for a single set of translations, using the structure of the 'it' object as the reference.
+// Italiano: Definisce il tipo per un singolo set di traduzioni, usando la struttura dell'oggetto 'it' come riferimento.
 export type TranslationSet = typeof translations.it;
 
+// English: The main object containing all translations, keyed by language code.
+// Italiano: L'oggetto principale che contiene tutte le traduzioni, indicizzate per codice lingua.
 export const translations = {
 	it: {
 		category: 'Categoria',
@@ -89,7 +99,6 @@ export const translations = {
 		paused: 'Pausiert',
 		voice: 'Stimme'
 	},
-	// --- NUOVA SEZIONE ---
 	pt: {
 		category: 'Categoria',
 		connections: 'Conexões',
@@ -109,7 +118,8 @@ export const translations = {
 	}
 };
 
-// Il fallback rimane in inglese, non c'è bisogno di modificarlo
+// English: A fallback set of translations (in English) to be used if a specific language or key is not found.
+// Italiano: Un set di traduzioni di fallback (in inglese) da utilizzare se una lingua o una chiave specifica non viene trovata.
 export const fallbackTranslations: TranslationSet = {
 	category: 'Category',
 	connections: 'Connections',

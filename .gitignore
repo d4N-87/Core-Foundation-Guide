@@ -1,23 +1,45 @@
-node_modules
+# File e cartelle generati dagli strumenti di sviluppo
+# ----------------------------------------------------
 
-# Output
-.output
-.vercel
-.netlify
-.wrangler
+# Dipendenze installate (enorme e ricostruibile con 'npm install')
+/node_modules
+
+# Cache e file generati da SvelteKit/Vite
 /.svelte-kit
 /build
 
-# OS
-.DS_Store
-Thumbs.db
+# Log di NPM
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
-# Env
+
+# File di ambiente (contengono chiavi segrete e non vanno mai condivisi)
+# -----------------------------------------------------------------------
 .env
 .env.*
 !.env.example
-!.env.test
 
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+
+# File specifici del sistema operativo
+# -----------------------------------
+.DS_Store
+Thumbs.db
+
+
+# File specifici dell'editor di codice
+# -----------------------------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# File temporanei che abbiamo creato durante lo sviluppo
+# -----------------------------------------------------
+extract.mjs
+build.mjs
+testi_da_tradurre.json
+testi_tradotti.json
+tree.txt
+structure.txt

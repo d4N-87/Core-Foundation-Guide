@@ -5,13 +5,17 @@
 	import LanguageSwitcher from './LanguageSwitcher.svelte';
 
 	const githubUrl = '#';
-	const title = 'CORE FOUNDATION GUIDE'; // Già in maiuscolo
+	const title = 'CORE FOUNDATION GUIDE';
+	// English: Split title into an array of characters for individual animation.
+	// Italiano: Divide il titolo in un array di caratteri per l'animazione individuale.
 	const titleChars = title.split('');
 	const highlightedChars = ['C', 'F', 'G'];
 
 	let headerElement: HTMLElement;
 
 	onMount(() => {
+		// English: Initial stagger animation for each character on component mount.
+		// Italiano: Animazione iniziale "stagger" per ogni carattere al montaggio del componente.
 		const initialAnimation = gsap.from('.char-span', {
 			opacity: 0,
 			y: 20,
@@ -21,16 +25,18 @@
 			delay: 0.5
 		});
 
+		// English: After the intro animation, apply a subtle pulsing effect to highlighted characters.
+		// Italiano: Dopo l'animazione di ingresso, applica un leggero effetto pulsante ai caratteri evidenziati.
 		initialAnimation.then(() => {
 			const highlightedElements = gsap.utils.toArray<HTMLElement>('.char-highlighted');
 			highlightedElements.forEach((char) => {
 				gsap.to(char, {
 					opacity: 0.8,
 					duration: 0.08,
-					repeat: -1,
-					yoyo: true,
+					repeat: -1, // English: Repeat indefinitely / Italiano: Ripeti all'infinito
+					yoyo: true, // English: Animate back and forth / Italiano: Anima avanti e indietro
 					ease: 'power1.inOut',
-					repeatDelay: gsap.utils.random(3, 8)
+					repeatDelay: gsap.utils.random(3, 8) // English: Random delay between pulses / Italiano: Ritardo casuale tra le pulsazioni
 				});
 			});
 		});
@@ -39,7 +45,11 @@
 		const amberColor = '#fbbF24';
 		const baseColor = '#e2e8f0';
 
+		// English: Use GSAP context for safe animation cleanup when the component is destroyed.
+		// Italiano: Usa il contesto GSAP per una pulizia sicura delle animazioni quando il componente viene distrutto.
 		const ctx = gsap.context(() => {
+			// English: Add mousemove event to create an interactive glow effect on characters.
+			// Italiano: Aggiunge l'evento mousemove per creare un effetto interattivo di luminescenza sui caratteri.
 			headerElement.addEventListener('mousemove', (e) => {
 				const { left, top } = headerElement.getBoundingClientRect();
 				const mouseX = e.clientX - left;
@@ -49,7 +59,12 @@
 					const { left, top, width, height } = char.getBoundingClientRect();
 					const charX = left - headerElement.getBoundingClientRect().left + width / 2;
 					const charY = top - headerElement.getBoundingClientRect().top + height / 2;
+					
+					// English: Calculate distance from mouse to character center.
+					// Italiano: Calcola la distanza tra il mouse e il centro del carattere.
 					const distance = Math.hypot(mouseX - charX, mouseY - charY);
+					// English: Map distance to a proximity value (1 = close, 0 = far).
+					// Italiano: Mappa la distanza a un valore di prossimità (1 = vicino, 0 = lontano).
 					const proximity = gsap.utils.mapRange(0, 100, 1, 0, distance);
 
 					gsap.to(char, {
@@ -61,6 +76,8 @@
 				});
 			});
 
+			// English: Reset character styles when the mouse leaves the header area.
+			// Italiano: Reimposta gli stili dei caratteri quando il mouse lascia l'area dell'header.
 			headerElement.addEventListener('mouseleave', () => {
 				gsap.to(chars, {
 					textShadow: '0 0 10px rgba(251, 191, 36, 0)',
@@ -71,6 +88,8 @@
 			});
 		}, headerElement);
 
+		// English: Cleanup function that reverts the GSAP context.
+		// Italiano: Funzione di pulizia che ripristina il contesto GSAP.
 		return () => ctx.revert();
 	});
 </script>
@@ -88,21 +107,20 @@
 				aria-label="Core Foundation Guide GitHub Repository"
 				class="transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_theme(colors.amber.400)] focus:scale-110 focus:outline-none"
 			>
-				<!-- Ridimensionato leggermente il logo per un miglior bilanciamento -->
 				<img src="/logo.webp" alt="Logo" class="h-10 w-10 md:h-12 md:w-12" />
 			</a>
 
 			<!-- 
-        LA CORREZIONE È QUI:
-        - 'text-xl': Dimensione di base per mobile.
-        - 'sm:text-2xl': Dimensione per schermi piccoli.
-        - 'md:text-3xl': Dimensione per schermi medi.
-        - 'lg:text-4xl': Dimensione per schermi grandi.
-        - 'min-w-0': Correzione per evitare che il titolo "spinga" via il selettore lingua su schermi stretti.
+        English: Responsive title container. 'min-w-0' prevents it from pushing other elements on small screens.
+        Italiano: Contenitore del titolo responsivo. 'min-w-0' evita che spinga via altri elementi su schermi piccoli.
       -->
 			<div
 				class="ml-3 min-w-0 text-xl font-bold tracking-wide text-slate-200 sm:ml-4 sm:text-2xl md:ml-6 md:text-3xl lg:text-4xl"
 			>
+				<!-- 
+          English: Loop through each character to render it in a separate span, allowing for individual animation.
+          Italiano: Itera su ogni carattere per renderizzarlo in uno span separato, permettendo l'animazione individuale.
+        -->
 				{#each titleChars as char}
 					{#if char === ' '}
 						<span class="char-span">&nbsp;</span>

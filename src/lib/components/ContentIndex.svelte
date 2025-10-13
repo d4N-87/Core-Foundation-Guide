@@ -7,27 +7,38 @@
 	import { quintOut } from 'svelte/easing';
 	import { createEventDispatcher } from 'svelte';
 
+	// English: The main data for the index, structured by category.
+	// Italiano: I dati principali per l'indice, strutturati per categoria.
 	export let postIndex: CategoryIndex[] = [];
+	// English: Dispatches events to the parent component, e.g., for scroll-to-card.
+	// Italiano: Invia eventi al componente genitore, es. per lo scroll-alla-card.
 	const dispatch = createEventDispatcher();
 
+	// English: Stores the slug of the currently open category in the mobile accordion view.
+	// Italiano: Memorizza lo slug della categoria attualmente aperta nella visualizzazione a fisarmonica mobile.
 	let openCategorySlug: string | null = null;
+	// English: An array to hold the DOM elements of the category panels for GSAP manipulation.
+	// Italiano: Un array per contenere gli elementi DOM dei pannelli delle categorie per la manipolazione con GSAP.
 	let categoryPanels: HTMLElement[] = [];
 
 	function toggleCategory(slug: string) {
 		openCategorySlug = openCategorySlug === slug ? null : slug;
 	}
 
+	// English: Dispatches the slug of the clicked post to the parent component.
+	// Italiano: Invia lo slug del post cliccato al componente genitore.
 	function handleLinkClick(slug: string) {
 		dispatch('indexclick', slug);
 	}
 
+	// English: On component mount, initialize the animated border effect for visible desktop panels.
+	// Italiano: Al montaggio del componente, inizializza l'effetto del bordo animato per i pannelli desktop visibili.
 	onMount(() => {
 		categoryPanels.forEach((panel) => {
 			if (!panel) return;
 
-			// LA CORREZIONE È QUI:
-			// Eseguiamo la logica solo se il pannello è effettivamente visibile a schermo.
-			// 'clientWidth' è > 0 solo per gli elementi renderizzati.
+			// English: This check ensures the animation logic only runs for the desktop grid, not the hidden mobile layout.
+			// Italiano: Questo controllo assicura che la logica di animazione venga eseguita solo per la griglia desktop, non per il layout mobile nascosto.
 			if (panel.clientWidth > 0) {
 				const rect = panel.querySelector<SVGRectElement>('.glow-rect');
 				if (!rect) return;
@@ -35,6 +46,8 @@
 				const length = rect.getTotalLength();
 				const impulseLength = length * 0.25;
 
+				// English: Uses the SVG stroke-dasharray/stroke-dashoffset technique to create a moving 'impulse' effect along the border.
+				// Italiano: Utilizza la tecnica SVG stroke-dasharray/stroke-dashoffset per creare un effetto 'impulso' in movimento lungo il bordo.
 				gsap.set(rect, {
 					strokeDasharray: `${impulseLength} ${length}`,
 					strokeDashoffset: impulseLength,
@@ -48,6 +61,8 @@
 					repeat: -1
 				});
 
+				// English: Fade the glowing border in and out on mouse hover.
+				// Italiano: Mostra e nasconde il bordo luminescente al passaggio del mouse.
 				panel.addEventListener('mouseenter', () => {
 					gsap.to(rect, { opacity: 1, duration: 0.3 });
 				});
@@ -60,6 +75,8 @@
 </script>
 
 <div class="w-full max-w-7xl mx-auto mb-16 px-4">
+	<!-- English: Desktop layout: a grid of category panels with the animated border effect. -->
+	<!-- Italiano: Layout desktop: una griglia di pannelli per categoria con l'effetto di bordo animato. -->
 	<div class="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 		{#each postIndex as category, i}
 			<div
@@ -68,6 +85,10 @@
                        bg-gradient-to-br from-cyan-950/20 to-slate-950/10
                        backdrop-blur-lg p-5"
 			>
+				<!-- 
+          English: SVG container for the animated glowing border effect. It's positioned behind the content.
+          Italiano: Contenitore SVG per l'effetto del bordo animato luminescente. È posizionato dietro al contenuto.
+        -->
 				<svg
 					class="glow-svg absolute inset-0 w-full h-full pointer-events-none"
 					width="100%"
@@ -102,6 +123,10 @@
 				<ul class="space-y-2">
 					{#each category.posts as post}
 						<li class="relative group/item">
+							<!-- 
+                English: `preventDefault` stops the default anchor jump; `handleLinkClick` dispatches an event for custom smooth scrolling.
+                Italiano: `preventDefault` blocca il salto di pagina dell'ancora; `handleLinkClick` invia un evento per uno scroll personalizzato.
+              -->
 							<a
 								href={`#${post.slug}`}
 								on:click|preventDefault={() => handleLinkClick(post.slug)}
@@ -120,7 +145,8 @@
 		{/each}
 	</div>
 
-	<!-- Layout mobile corretto -->
+	<!-- English: Mobile layout: an accordion that displays one category at a time. -->
+	<!-- Italiano: Layout mobile: una fisarmonica che mostra una categoria alla volta. -->
 	<div class="md:hidden space-y-3">
 		{#each postIndex as category}
 			<div class="bg-slate-900/50 border border-slate-800 rounded-lg overflow-hidden">

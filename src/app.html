@@ -2,16 +2,37 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<!-- 🔹 CORREZIONE: Aggiunti i link per il set completo di favicon -->
+		
+		<!-- 
+			English: A comprehensive set of favicon links for different platforms (Apple, standard browsers) and the web manifest for PWA capabilities.
+			Italiano: Un set completo di link per le favicon per diverse piattaforme (Apple, browser standard) e il web manifest per le funzionalità PWA.
+		-->
 		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 		<link rel="manifest" href="/site.webmanifest">
 		
+		<!-- 
+			English: Sets the viewport to ensure the site is responsive and scales correctly on all devices.
+			Italiano: Imposta il viewport per assicurare che il sito sia responsivo e si adatti correttamente a tutti i dispositivi.
+		-->
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<!-- 
+			English: SvelteKit placeholder. This is where SvelteKit injects all necessary head content, like CSS links and meta tags from `svelte:head`.
+			Italiano: Segnaposto di SvelteKit. Qui è dove SvelteKit inietta tutto il contenuto necessario per l'head, come i link CSS e i meta tag da `svelte:head`.
+		-->
 		%sveltekit.head%
 	</head>
+	<!-- 
+		English: SvelteKit attribute to enable data preloading on mouse hover over links, making navigation feel faster.
+		Italiano: Attributo di SvelteKit per abilitare il precaricamento dei dati al passaggio del mouse sui link, rendendo la navigazione più veloce.
+	-->
 	<body data-sveltekit-preload-data="hover">
+		<!-- 
+			English: SvelteKit placeholder for the main application body. The `display: contents` wrapper makes the div itself layout-neutral.
+			Italiano: Segnaposto di SvelteKit per il corpo principale dell'applicazione. Il wrapper `display: contents` rende il div stesso neutro a livello di layout.
+		-->
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

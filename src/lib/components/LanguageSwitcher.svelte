@@ -7,7 +7,8 @@
 	import { quintOut } from 'svelte/easing';
 	import { browser } from '$app/environment';
 
-	// LA CORREZIONE È QUI: Aggiunti i nomi completi per tutte le lingue
+	// English: A record to map language codes to their full names for display.
+	// Italiano: Un record per mappare i codici lingua ai loro nomi completi per la visualizzazione.
 	const languageNames: Record<string, string> = {
 		it: 'Italiano',
 		en: 'English',
@@ -17,32 +18,44 @@
 		pt: 'Português'
 	};
 
+	// English: Creates an array of available languages from the translations object.
+	// Italiano: Crea un array delle lingue disponibili dall'oggetto delle traduzioni.
 	const availableLanguages = Object.keys(translations).map((code) => ({
 		code,
 		name: languageNames[code] || code.toUpperCase()
 	}));
 
+	// English: Component's internal state.
+	// Italiano: Stato interno del componente.
 	let isOpen = false;
 	let switcherElement: HTMLElement;
 
+	// English: Constructs the correct URL for the new language, preserving the rest of the path.
+	// Italiano: Costruisce l'URL corretto per la nuova lingua, preservando il resto del percorso.
 	function getLanguageUrl(newLang: string): string {
 		const currentPathname = $page.url.pathname;
 		const parts = currentPathname.split('/');
-		// Assicurati che il percorso abbia almeno la parte della lingua
+		// English: The language code is expected to be the first part of the path (e.g., /en/...).
+		// Italiano: Il codice della lingua è atteso come prima parte del percorso (es. /en/...).
 		if (parts.length > 1) {
 			parts[1] = newLang;
 			return parts.join('/');
 		}
-		// Fallback per la root, anche se non dovrebbe succedere con la nostra struttura
+		// English: Fallback for the root path.
+		// Italiano: Fallback per il percorso radice.
 		return `/${newLang}`;
 	}
 
+	// English: Closes the dropdown menu if a click is detected outside of the component.
+	// Italiano: Chiude il menu a tendina se viene rilevato un click al di fuori del componente.
 	function handleClickOutside(event: MouseEvent) {
 		if (switcherElement && !switcherElement.contains(event.target as Node)) {
 			isOpen = false;
 		}
 	}
 
+	// English: Add and remove the global click listener only on the client-side.
+	// Italiano: Aggiunge e rimuove il listener di click globale solo sul lato client.
 	if (browser) {
 		onMount(() => {
 			window.addEventListener('click', handleClickOutside);
@@ -54,6 +67,8 @@
 	}
 </script>
 
+<!-- English: SVG icon for the language switcher button. -->
+<!-- Italiano: Icona SVG per il pulsante del selettore di lingua. -->
 <svg class="hidden">
 	<symbol id="icon-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 		<circle cx="12" cy="12" r="10" />
@@ -80,6 +95,12 @@
 			<ul class="space-y-1">
 				{#each availableLanguages as lang}
 					<li>
+						<!-- 
+              English: `data-sveltekit-reload` forces a full page reload on navigation. 
+                       This is necessary to ensure the server-side load functions re-run with the new language.
+              Italiano: `data-sveltekit-reload` forza un ricaricamento completo della pagina alla navigazione. 
+                        È necessario per assicurare che le funzioni di load lato server vengano rieseguite con la nuova lingua.
+            -->
 						<a
 							href={getLanguageUrl(lang.code)}
 							data-sveltekit-reload

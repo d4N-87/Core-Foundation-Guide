@@ -13,18 +13,26 @@
 	import { quintOut } from 'svelte/easing';
 	import SEO from '$lib/components/SEO.svelte';
 
+	// English: Data passed from the corresponding `+page.server.ts` file.
+	// Italiano: Dati passati dal file `+page.server.ts` corrispondente.
 	export let data: PageData;
 	let gridWrapperElement: HTMLElement;
 	let isIndexOpen = false;
 	let mapButtonElement: HTMLElement;
 
+	// English: Destructure and prepare data for the component.
+	// Italiano: Destruttura e prepara i dati per il componente.
 	const allPosts = data?.posts ?? [];
 	const postIndex = data?.postIndex ?? [];
 	const lang = data?.lang as Language | undefined;
 	const t = lang && data?.translations ? data.translations[lang] : fallbackTranslations;
 
+	// English: Define a fixed order for categories.
+	// Italiano: Definisce un ordine fisso per le categorie.
 	const categoryOrder = ['fundamentals', 'system_anatomy', 'core_concepts', 'advanced_topics'];
 
+	// English: Create a unique, sorted list of categories for the filter UI.
+	// Italiano: Crea una lista unica e ordinata di categorie per l'interfaccia di filtro.
 	const categories = [...new Set(allPosts.map((p) => p.categorySlug))]
 		.map((slug) => {
 			const postInCategory = allPosts.find((p) => p.categorySlug === slug)!;
@@ -42,9 +50,13 @@
 			return indexA - indexB;
 		});
 
+	// English: State variables for the search and filter functionality.
+	// Italiano: Variabili di stato per le funzionalità di ricerca e filtro.
 	let searchTerm = '';
 	let selectedCategories: string[] = [];
 
+	// English: Reactive statement that filters the posts whenever `searchTerm` or `selectedCategories` changes.
+	// Italiano: Dichiarazione reattiva che filtra i post ogni volta che `searchTerm` o `selectedCategories` cambiano.
 	$: filteredPosts = allPosts.filter((post) => {
 		const searchMatch =
 			searchTerm === '' ||
@@ -56,21 +68,33 @@
 		return searchMatch && categoryMatch;
 	});
 
+	// English: Handles the click event from a card in the NodeGrid.
+	// Italiano: Gestisce l'evento di click da una card nel NodeGrid.
 	async function handleCardClick(event: CustomEvent<{ post: Post; element: HTMLElement }>) {
 		const { post, element } = event.detail;
 		if (!lang) return;
+		// English: Store the card's position for the transition animation.
+		// Italiano: Memorizza la posizione della card per l'animazione di transizione.
 		transitionStore.set({ rect: element.getBoundingClientRect(), scrollY: window.scrollY });
 		if (gridWrapperElement) {
+			// English: Fade out the grid before navigating.
+			// Italiano: Esegue un fade-out della griglia prima di navigare.
 			await gsap.to(gridWrapperElement, { opacity: 0, duration: 0.3 }).then();
 		}
 		goto(`/${lang}/${post.categorySlug}/${post.slug}`);
 	}
 
+	// English: Handles the click event from a link in the ContentIndex.
+	// Italiano: Gestisce l'evento di click da un link nel ContentIndex.
 	function handleIndexClick(event: CustomEvent<string>) {
 		const slug = event.detail;
 		const cardElement = gridWrapperElement?.querySelector(`[data-slug="${slug}"]`);
 		if (cardElement) {
+			// English: Smoothly scroll to the corresponding card in the grid.
+			// Italiano: Esegue uno scroll fluido fino alla card corrispondente nella griglia.
 			cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			// English: Apply a temporary highlight effect to the card.
+			// Italiano: Applica un effetto temporaneo di evidenziazione alla card.
 			gsap.fromTo(
 				cardElement,
 				{
@@ -87,6 +111,8 @@
 		}
 	}
 
+	// English: Initialize the hover animation for the 'Show Map' button.
+	// Italiano: Inizializza l'animazione di hover per il pulsante 'Mostra Mappa'.
 	onMount(() => {
 		if (!mapButtonElement) return;
 		const shineElement = mapButtonElement.querySelector('.shine-effect');
@@ -106,6 +132,8 @@
 	description="Core Foundation Guide: un manuale interattivo e una guida di riferimento per i concetti fondamentali dell'intelligenza artificiale."
 />
 
+<!-- English: Button to toggle the visibility of the ContentIndex. -->
+<!-- Italiano: Pulsante per mostrare/nascondere il ContentIndex. -->
 <div class="pt-8 text-center">
 	<button
 		bind:this={mapButtonElement}
@@ -129,12 +157,16 @@
 	</button>
 </div>
 
+<!-- English: The ContentIndex component, which is conditionally rendered. -->
+<!-- Italiano: Il componente ContentIndex, che viene renderizzato condizionalmente. -->
 {#if isIndexOpen}
 	<div class="pt-8" transition:slide={{ duration: 400, easing: quintOut }}>
 		<ContentIndex {postIndex} on:indexclick={handleIndexClick} />
 	</div>
 {/if}
 
+<!-- English: Search and filter controls section. -->
+<!-- Italiano: Sezione dei controlli di ricerca e filtro. -->
 <section class="px-4 pt-8 text-center md:mb-6">
 	<div class="mx-auto max-w-lg">
 		<input
@@ -163,6 +195,8 @@
 	</div>
 </section>
 
+<!-- English: The main grid of posts. -->
+<!-- Italiano: La griglia principale dei post. -->
 <div bind:this={gridWrapperElement} class="mx-auto max-w-7xl px-4 pb-12">
 	<NodeGrid posts={filteredPosts} on:cardclick={handleCardClick} />
 	{#if filteredPosts.length === 0 && allPosts.length > 0}

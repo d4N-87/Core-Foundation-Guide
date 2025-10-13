@@ -1,22 +1,38 @@
 /* src/app.css */
 
+/* 
+  English: Tailwind CSS directives. These are placeholders that get replaced by Tailwind's
+           base styles, component classes, and utility classes during the build process.
+  Italiano: Direttive di Tailwind CSS. Sono segnaposto che vengono sostituiti dagli stili di base,
+            dalle classi dei componenti e dalle classi di utilità di Tailwind durante il processo di build.
+*/
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* 
+  English: Sets a default dark background color for the entire application.
+  Italiano: Imposta un colore di sfondo scuro predefinito per l'intera applicazione.
+*/
 body {
-  background-color: #0a0a0a;
+	background-color: #0a0a0a;
 }
 
+/* 
+  English: Imports the custom 'Inter' font family from local files for different weights.
+           `font-display: swap` ensures that text remains visible using a fallback font while Inter is loading.
+  Italiano: Importa la famiglia di caratteri personalizzata 'Inter' da file locali per i diversi pesi.
+            `font-display: swap` assicura che il testo rimanga visibile con un font di fallback mentre Inter viene caricato.
+*/
 @font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-display: swap;
+	font-family: 'Inter';
+	src: url('/fonts/Inter-Regular.ttf') format('truetype');
+	font-weight: 400;
+	font-display: swap;
 }
 @font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-display: swap;
+	font-family: 'Inter';
+	src: url('/fonts/Inter-Bold.ttf') format('truetype');
+	font-weight: 700;
+	font-display: swap;
 }
