@@ -7,7 +7,6 @@
 # Cache e file generati da SvelteKit/Vite
 /.svelte-kit
 /build
-/docs
 
 # Log di NPM
 npm-debug.log*
