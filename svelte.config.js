@@ -26,7 +26,9 @@ const config = {
 			assets: 'docs',
 			fallback: '404.html'
 		}),
-
+		paths: {
+        	base: process.env.NODE_ENV === 'production' ? '/Core-Foundation-Guide' : ''
+    	},
 		// English: Sets up path aliases for cleaner imports. `$lib` points to the `src/lib` directory.
 		// Italiano: Imposta degli alias per i percorsi per avere import più puliti. `$lib` punta alla cartella `src/lib`.
 		alias: {
