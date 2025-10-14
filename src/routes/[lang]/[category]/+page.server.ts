@@ -1,6 +1,19 @@
 // src/routes/[lang]/[category]/+page.server.ts
 import { getPosts } from '$lib/server/posts';
 import type { PageServerLoad } from './$types';
+import { translations } from '$lib/translations';
+
+export const entries = async () => {
+	const entries = [];
+	for (const lang of Object.keys(translations)) {
+		const posts = await getPosts(lang);
+		const categories = [...new Set(posts.map((p) => p.categorySlug))];
+		for (const category of categories) {
+			entries.push({ lang, category });
+		}
+	}
+	return entries;
+};
 
 // English: SvelteKit's server-side load function for the category page.
 // Italiano: Funzione di load lato server di SvelteKit per la pagina di categoria.

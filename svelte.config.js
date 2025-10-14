@@ -1,5 +1,5 @@
 // svelte.config.js
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-static';
 import { mdsvex } from 'mdsvex';
 import remarkGfm from 'remark-gfm';
 
@@ -21,7 +21,11 @@ const config = {
 	kit: {
 		// English: Specifies the adapter to use for building the project. `adapter-auto` automatically detects the deployment environment.
 		// Italiano: Specifica l'adattatore da usare per la build del progetto. `adapter-auto` rileva automaticamente l'ambiente di deployment.
-		adapter: adapter(),
+		adapter: adapter({
+			pages: 'docs',
+			assets: 'docs',
+			fallback: '404.html'
+		}),
 
 		// English: Sets up path aliases for cleaner imports. `$lib` points to the `src/lib` directory.
 		// Italiano: Imposta degli alias per i percorsi per avere import più puliti. `$lib` punta alla cartella `src/lib`.

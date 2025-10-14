@@ -1,6 +1,11 @@
 // src/routes/[lang]/+page.server.ts
 import { getPosts } from '$lib/server/posts';
 import type { PageServerLoad } from './$types';
+import { translations } from '$lib/translations';
+
+export const entries = () => {
+	return Object.keys(translations).map((lang) => ({ lang }));
+};
 
 // English: Defines the shape of a single post entry for the content index.
 // Italiano: Definisce la forma di una singola voce di post per l'indice dei contenuti.

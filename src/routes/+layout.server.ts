@@ -1,6 +1,8 @@
 // src/routes/+layout.server.ts
 import { translations } from '$lib/translations';
 
+export const prerender = true;
+
 // English: This is the root server load function for the entire application.
 //          Data returned from here is available to all pages and layouts.
 // Italiano: Questa è la funzione di load server di radice per l'intera applicazione.

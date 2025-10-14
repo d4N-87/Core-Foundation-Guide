@@ -1,7 +1,19 @@
 // src/routes/[lang]/[category]/[slug]/+page.server.ts
-import { getPost } from '$lib/server/posts';
+import { getPost, getPosts } from '$lib/server/posts';
 import type { PageServerLoad } from './$types';
 import { marked } from 'marked';
+import { translations } from '$lib/translations';
+
+export const entries = async () => {
+	const entries = [];
+	for (const lang of Object.keys(translations)) {
+		const posts = await getPosts(lang);
+		for (const post of posts) {
+			entries.push({ lang, category: post.categorySlug, slug: post.slug });
+		}
+	}
+	return entries;
+};
 import { error } from '@sveltejs/kit';
 
 // English: A simple utility to strip all HTML tags from a string, useful for creating plain text excerpts.
