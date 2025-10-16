@@ -23,7 +23,7 @@ jobs:
           node-version: 20 # Usiamo una versione stabile e recente
           cache: 'npm'
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Build the site
         run: npm run build
       - name: Upload artifact
