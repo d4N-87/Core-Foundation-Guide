@@ -6,9 +6,8 @@
 	import { fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { browser } from '$app/environment';
+	import { base } from '$app/paths'; // <-- Importa 'base'
 
-	// English: A record to map language codes to their full names for display.
-	// Italiano: Un record per mappare i codici lingua ai loro nomi completi per la visualizzazione.
 	const languageNames: Record<string, string> = {
 		it: 'Italiano',
 		en: 'English',
@@ -18,49 +17,44 @@
 		pt: 'Português'
 	};
 
-	// English: Creates an array of available languages from the translations object.
-	// Italiano: Crea un array delle lingue disponibili dall'oggetto delle traduzioni.
 	const availableLanguages = Object.keys(translations).map((code) => ({
 		code,
 		name: languageNames[code] || code.toUpperCase()
 	}));
 
-	// English: Component's internal state.
-	// Italiano: Stato interno del componente.
 	let isOpen = false;
 	let switcherElement: HTMLElement;
 
-	// English: Constructs the correct URL for the new language, preserving the rest of the path.
-	// Italiano: Costruisce l'URL corretto per la nuova lingua, preservando il resto del percorso.
+	// ▼▼▼ FUNZIONE 'getLanguageUrl' CORRETTA E ROBUSTA ▼▼▼
 	function getLanguageUrl(newLang: string): string {
-		const currentPathname = $page.url.pathname;
-		const parts = currentPathname.split('/');
-		// English: The language code is expected to be the first part of the path (e.g., /en/...).
-		// Italiano: Il codice della lingua è atteso come prima parte del percorso (es. /en/...).
-		if (parts.length > 1) {
-			parts[1] = newLang;
-			return parts.join('/');
+		const currentPath = $page.url.pathname.replace(/\.html$/, '');
+		const parts = currentPath.split('/');
+
+		// L'array è ['', 'Core-Foundation-Guide', 'it', 'category', 'slug']
+		// L'indice [2] è la lingua.
+		if (parts.length > 2) {
+			parts[2] = newLang;
+			// Se siamo in una pagina di post o categoria, ricostruisci il link .html
+			if (parts.length > 3) {
+				return parts.join('/') + '.html';
+			}
+			// Se siamo in una pagina di lingua (es. /it), il link sarà /en.html
+			return `${base}/${newLang}.html`;
 		}
-		// English: Fallback for the root path.
-		// Italiano: Fallback per il percorso radice.
-		return `/${newLang}`;
+		// Fallback per la root
+		return `${base}/${newLang}.html`;
 	}
 
-	// English: Closes the dropdown menu if a click is detected outside of the component.
-	// Italiano: Chiude il menu a tendina se viene rilevato un click al di fuori del componente.
 	function handleClickOutside(event: MouseEvent) {
 		if (switcherElement && !switcherElement.contains(event.target as Node)) {
 			isOpen = false;
 		}
 	}
 
-	// English: Add and remove the global click listener only on the client-side.
-	// Italiano: Aggiunge e rimuove il listener di click globale solo sul lato client.
 	if (browser) {
 		onMount(() => {
 			window.addEventListener('click', handleClickOutside);
 		});
-
 		onDestroy(() => {
 			window.removeEventListener('click', handleClickOutside);
 		});

@@ -5,42 +5,32 @@
 	import NodeGrid from '$lib/components/NodeGrid.svelte';
 	import ContentIndex from '$lib/components/ContentIndex.svelte';
 	import { goto } from '$app/navigation';
-	import type { Post } from '$lib/server/posts';
+	import { base } from '$app/paths';
+	import type { Post } from '$lib/posts';
 	import { type Language, fallbackTranslations } from '$lib/translations';
-	import { transitionStore } from '$lib/transitionStore';
 	import { gsap } from 'gsap';
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import SEO from '$lib/components/SEO.svelte';
+	import { browser } from '$app/environment';
 
-	// English: Data passed from the corresponding `+page.server.ts` file.
-	// Italiano: Dati passati dal file `+page.server.ts` corrispondente.
 	export let data: PageData;
 	let gridWrapperElement: HTMLElement;
 	let isIndexOpen = false;
 	let mapButtonElement: HTMLElement;
 
-	// English: Destructure and prepare data for the component.
-	// Italiano: Destruttura e prepara i dati per il componente.
-	const allPosts = data?.posts ?? [];
-	const postIndex = data?.postIndex ?? [];
-	const lang = data?.lang as Language | undefined;
-	const t = lang && data?.translations ? data.translations[lang] : fallbackTranslations;
+	const allPosts = data.posts ?? [];
+	const postIndex = data.postIndex ?? [];
+	const lang = data.lang as Language | undefined;
+	const t = (lang && data.translations) ? data.translations[lang] : fallbackTranslations;
 
-	// English: Define a fixed order for categories.
-	// Italiano: Definisce un ordine fisso per le categorie.
 	const categoryOrder = ['fundamentals', 'system_anatomy', 'core_concepts', 'advanced_topics'];
 
-	// English: Create a unique, sorted list of categories for the filter UI.
-	// Italiano: Crea una lista unica e ordinata di categorie per l'interfaccia di filtro.
+	// ▼▼▼ CODICE RIPRISTINATO ▼▼▼
 	const categories = [...new Set(allPosts.map((p) => p.categorySlug))]
 		.map((slug) => {
 			const postInCategory = allPosts.find((p) => p.categorySlug === slug)!;
-			return {
-				slug: slug,
-				name: postInCategory.categoryName,
-				color: postInCategory.categoryColor || 'slate'
-			};
+			return { slug, name: postInCategory.categoryName, color: postInCategory.categoryColor || 'slate' };
 		})
 		.sort((a, b) => {
 			const indexA = categoryOrder.indexOf(a.slug);
@@ -50,79 +40,40 @@
 			return indexA - indexB;
 		});
 
-	// English: State variables for the search and filter functionality.
-	// Italiano: Variabili di stato per le funzionalità di ricerca e filtro.
 	let searchTerm = '';
 	let selectedCategories: string[] = [];
 
-	// English: Reactive statement that filters the posts whenever `searchTerm` or `selectedCategories` changes.
-	// Italiano: Dichiarazione reattiva che filtra i post ogni volta che `searchTerm` o `selectedCategories` cambiano.
+	// ▼▼▼ CODICE RIPRISTINATO ▼▼▼
 	$: filteredPosts = allPosts.filter((post) => {
-		const searchMatch =
-			searchTerm === '' ||
-			post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			post.plainExcerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			post.categoryName.toLowerCase().includes(searchTerm.toLowerCase());
-		const categoryMatch =
-			selectedCategories.length === 0 || selectedCategories.includes(post.categorySlug);
+		const searchMatch = searchTerm === '' || post.title.toLowerCase().includes(searchTerm.toLowerCase()) || post.plainExcerpt.toLowerCase().includes(searchTerm.toLowerCase()) || post.categoryName.toLowerCase().includes(searchTerm.toLowerCase());
+		const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(post.categorySlug);
 		return searchMatch && categoryMatch;
 	});
 
-	// English: Handles the click event from a card in the NodeGrid.
-	// Italiano: Gestisce l'evento di click da una card nel NodeGrid.
-	async function handleCardClick(event: CustomEvent<{ post: Post; element: HTMLElement }>) {
-		const { post, element } = event.detail;
+	function handleCardClick(event: CustomEvent<{ post: Post }>) {
+		const { post } = event.detail;
 		if (!lang) return;
-		// English: Store the card's position for the transition animation.
-		// Italiano: Memorizza la posizione della card per l'animazione di transizione.
-		transitionStore.set({ rect: element.getBoundingClientRect(), scrollY: window.scrollY });
-		if (gridWrapperElement) {
-			// English: Fade out the grid before navigating.
-			// Italiano: Esegue un fade-out della griglia prima di navigare.
-			await gsap.to(gridWrapperElement, { opacity: 0, duration: 0.3 }).then();
-		}
-		goto(`/${lang}/${post.categorySlug}/${post.slug}`);
+		goto(`${base}/${lang}/${post.categorySlug}/${post.slug}.html`);
 	}
 
-	// English: Handles the click event from a link in the ContentIndex.
-	// Italiano: Gestisce l'evento di click da un link nel ContentIndex.
 	function handleIndexClick(event: CustomEvent<string>) {
 		const slug = event.detail;
 		const cardElement = gridWrapperElement?.querySelector(`[data-slug="${slug}"]`);
 		if (cardElement) {
-			// English: Smoothly scroll to the corresponding card in the grid.
-			// Italiano: Esegue uno scroll fluido fino alla card corrispondente nella griglia.
 			cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-			// English: Apply a temporary highlight effect to the card.
-			// Italiano: Applica un effetto temporaneo di evidenziazione alla card.
-			gsap.fromTo(
-				cardElement,
-				{
-					boxShadow: '0 0 25px rgba(251, 191, 36, 0.7)',
-					outline: '2px solid rgba(251, 191, 36, 0.8)'
-				},
-				{
-					boxShadow: '0 0 0px rgba(251, 191, 36, 0)',
-					outline: '0px solid rgba(251, 191, 36, 0)',
-					duration: 1.5,
-					ease: 'power2.out'
-				}
-			);
+			gsap.fromTo(cardElement, { boxShadow: '0 0 25px rgba(251, 191, 36, 0.7)', outline: '2px solid rgba(251, 191, 36, 0.8)' }, { boxShadow: '0 0 0px rgba(251, 191, 36, 0)', outline: '0px solid rgba(251, 191, 36, 0)', duration: 1.5, ease: 'power2.out' });
 		}
 	}
 
-	// English: Initialize the hover animation for the 'Show Map' button.
-	// Italiano: Inizializza l'animazione di hover per il pulsante 'Mostra Mappa'.
 	onMount(() => {
+		if (gridWrapperElement) {
+			gsap.set(gridWrapperElement, { opacity: 1 });
+		}
 		if (!mapButtonElement) return;
 		const shineElement = mapButtonElement.querySelector('.shine-effect');
 		if (!shineElement) return;
 		const timeline = gsap.timeline({ paused: true });
-		timeline.fromTo(
-			shineElement,
-			{ x: '-110%' },
-			{ x: '110%', duration: 0.5, ease: 'power1.in' }
-		);
+		timeline.fromTo(shineElement, { x: '-110%' }, { x: '110%', duration: 0.5, ease: 'power1.in' });
 		mapButtonElement.addEventListener('mouseenter', () => timeline.restart());
 	});
 </script>

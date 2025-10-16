@@ -1,7 +1,7 @@
 {
 	"name": "project-x",
 	"private": true,
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -17,6 +17,7 @@
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
 		"@sveltejs/adapter-auto": "^6.0.0",
+		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.46.2",
 		"@sveltejs/vite-plugin-svelte": "^6.0.0",
 		"@tailwindcss/typography": "^0.5.19",

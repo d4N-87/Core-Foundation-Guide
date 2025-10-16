@@ -3,14 +3,12 @@
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
 	import LanguageSwitcher from './LanguageSwitcher.svelte';
+	import logoUrl from '$lib/assets/logo.webp'; // <-- 1. IMPORTIAMO L'IMMAGINE
 
-	const githubUrl = '#';
+	const githubUrl = 'https://github.com/TuoNomeUtente/Core-Foundation-Guide';
 	const title = 'CORE FOUNDATION GUIDE';
-	// English: Split title into an array of characters for individual animation.
-	// Italiano: Divide il titolo in un array di caratteri per l'animazione individuale.
 	const titleChars = title.split('');
 	const highlightedChars = ['C', 'F', 'G'];
-
 	let headerElement: HTMLElement;
 
 	onMount(() => {
@@ -107,7 +105,7 @@
 				aria-label="Core Foundation Guide GitHub Repository"
 				class="transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_theme(colors.amber.400)] focus:scale-110 focus:outline-none"
 			>
-				<img src="/logo.webp" alt="Logo" class="h-10 w-10 md:h-12 md:w-12" />
+				<img src={logoUrl} alt="Logo" class="h-10 w-10 md:h-12 md:w-12" />
 			</a>
 
 			<!-- 

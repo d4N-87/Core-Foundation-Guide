@@ -2,7 +2,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
-	import type { CategoryIndex } from '../../routes/[lang]/+page.server';
+	import type { CategoryIndex } from '../../routes/[lang]/+page';
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { createEventDispatcher } from 'svelte';

@@ -2,7 +2,7 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher, tick } from 'svelte';
 	import NodeCard from '$lib/components/NodeCard.svelte';
-	import type { Post } from '$lib/server/posts';
+	import type { Post } from '$lib/posts';
 	import type { gsap as GSAP } from 'gsap';
 	import { fly } from 'svelte/transition';
 
