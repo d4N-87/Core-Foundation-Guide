@@ -1,6 +1,6 @@
 <!-- src/lib/components/Footer.svelte -->
 <script lang="ts">
-	const githubUrl = 'https://github.com/TuoNomeUtente/Core-Foundation-Guide';
+	const githubUrl = 'https://github.com/d4N-87/Core-Foundation-Guide';
 	// English: Get the current year dynamically for the copyright notice.
 	// Italiano: Ottiene dinamicamente l'anno corrente per la nota di copyright.
 	const currentYear = new Date().getFullYear();

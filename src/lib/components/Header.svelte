@@ -5,7 +5,7 @@
 	import LanguageSwitcher from './LanguageSwitcher.svelte';
 	import logoUrl from '$lib/assets/logo.webp'; // <-- 1. IMPORTIAMO L'IMMAGINE
 
-	const githubUrl = 'https://github.com/TuoNomeUtente/Core-Foundation-Guide';
+	const githubUrl = 'https://github.com/d4N-87/Core-Foundation-Guide';
 	const title = 'CORE FOUNDATION GUIDE';
 	const titleChars = title.split('');
 	const highlightedChars = ['C', 'F', 'G'];
