@@ -2,13 +2,13 @@ code
 Markdown
 <div align="center">
   <a href="https://d4n-87.github.io/Core-Foundation-Guide/">
-    <img src="https://github.com/d4N-87/Core-Foundation-Guide/blob/main/src/lib/assets/logo.webp" alt="Core Foundation Guide Logo" width="150" height="150">
+    <img src="https://github.com/d4N-87/Core-Foundation-Guide/blob/main/src/lib/assets/logo.webp" alt="Core Foundation Guide Logo" width="250" height="250">
   </a>
   <h1>Core Foundation Guide</h1>
   <p>
-    Un manuale interattivo per capire i concetti fondamentali dell'intelligenza artificiale.
+    🇮🇹 Un manuale interattivo per capire i concetti fondamentali dell'intelligenza artificiale.
     <br>
-    <em>An interactive manual to understand the fundamental concepts of Artificial Intelligence.</em>
+    <em>🇬🇧 An interactive manual to understand the fundamental concepts of Artificial Intelligence.</em>
   </p>
   <p>
     <strong><a href="https://d4n-87.github.io/Core-Foundation-Guide/">🚀 VAI AL SITO LIVE / GO TO THE LIVE SITE 🚀</a></strong>
@@ -20,9 +20,19 @@ Markdown
   </p>
 </div>
 
+<div align="center">
+
+[![Stargazers][stars-shield]][stars-url]
+[![Release Version Badge](https://img.shields.io/github/v/release/d4N-87/Core-Foundation-Guide?style=for-the-badge)](https://github.com/d4N-87/Core-Foundation-Guide/releases)
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+
+</div>
+
 ---
 
-### English
+### 🇬🇧 English
 
 Have you ever started exploring the world of open-source AI image generation with tools like ComfyUI or Stable Diffusion and felt overwhelmed by a flood of technical terms? **Checkpoint, LoRa, UNet, VAE, Conditioning...** what do they all mean?
 
@@ -30,9 +40,12 @@ Have you ever started exploring the world of open-source AI image generation wit
 
 This guide breaks down complex concepts into simple, easy-to-digest articles, helping you move from confusion to confidence. Whether you're trying to figure out why your images look a certain way or you just want to master the tools you're using, this is your starting point.
 
-![Screenshot of the application](INSERISCI_QUI_IL_LINK_ALLO_SCREENSHOT)
+| 🇮🇹 Pagina iniziale / 🇬🇧 Home | 🇮🇹 Categorie / 🇬🇧 Category | 🇮🇹 Filtri / 🇬🇧 Filters | 🇮🇹 Articolo / 🇬🇧 Article |
+| :---: | :---: | :---: | :---: |
+| <img src="https://raw.githubusercontent.com/d4N-87/Core-Foundation-Guide/main/.github/assets/screenshot_01.jpg" alt="Schermata di input" width="100%"> | <img src="https://raw.githubusercontent.com/d4N-87/Core-Foundation-Guide/main/.github/assets/screenshot_02.jpg" alt="Schermata dei risultati" width="100%"> | <img src="https://raw.githubusercontent.com/d4N-87/Core-Foundation-Guide/main/.github/assets/screenshot_03.jpg" alt="Filtri e lista modelli" width="100%"> | <img src="https://raw.githubusercontent.com/d4N-87/Core-Foundation-Guide/main/.github/assets/screenshot_04.jpg" alt="Filtri e lista modelli" width="100%"> |
 
-## Features
+
+## ⚙️ Features
 
 *   **Interactive Content:** A dynamic and engaging way to learn complex AI topics.
 *   **Multilingual Support:** Fully localized content in Italian, English, and more.
@@ -41,7 +54,7 @@ This guide breaks down complex concepts into simple, easy-to-digest articles, he
 *   **Animated Background:** A generative neural network background built with p5.js.
 *   **Static & Fast:** Built with SvelteKit's static adapter for maximum performance, deployed on GitHub Pages.
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 *   **Framework:** [SvelteKit](https://kit.svelte.dev/)
 *   **Language:** [TypeScript](https://www.typescriptlang.org/)
@@ -51,11 +64,11 @@ This guide breaks down complex concepts into simple, easy-to-digest articles, he
 
 ## How to Run Locally
 
-### Prerequisites
+### 📄 Prerequisites
 
 - [Node.js](https://nodejs.org/) (version 18.x or higher is recommended)
 
-### Installation
+### 💻 Installation
 
 1.  Clone the repository:
     ```bash
@@ -78,7 +91,7 @@ This guide breaks down complex concepts into simple, easy-to-digest articles, he
 
 <br>
 
-### Italiano
+### 🇮🇹 Italiano
 
 Hai mai iniziato a esplorare il mondo della generazione di immagini AI open-source con strumenti come ComfyUI o Stable Diffusion, sentendoti sopraffatto da una valanga di termini tecnici? **Checkpoint, LoRa, UNet, VAE, Conditioning...** cosa significano?
 
@@ -86,7 +99,7 @@ Hai mai iniziato a esplorare il mondo della generazione di immagini AI open-sour
 
 Questa guida scompone i concetti complessi in articoli semplici e facili da digerire, aiutandoti a passare dalla confusione alla sicurezza. Che tu stia cercando di capire perché le tue immagini hanno un certo aspetto o semplicemente desideri padroneggiare gli strumenti che usi, questo è il tuo punto di partenza.
 
-## Funzionalità
+## ⚙️ Funzionalità
 
 *   **Contenuti Interattivi:** Un modo dinamico e coinvolgente per apprendere argomenti complessi di AI.
 *   **Supporto Multilingua:** Contenuti completamente localizzati in Italiano, Inglese e altre lingue.
@@ -95,7 +108,7 @@ Questa guida scompone i concetti complessi in articoli semplici e facili da dige
 *   **Sfondo Animato:** Uno sfondo generativo a rete neurale costruito con p5.js.
 *   **Statico e Veloce:** Costruito con l'adattatore statico di SvelteKit per le massime prestazioni, pubblicato su GitHub Pages.
 
-## Tecnologie Utilizzate
+## 🛠️ Tecnologie Utilizzate
 
 *   **Framework:** [SvelteKit](https://kit.svelte.dev/)
 *   **Linguaggio:** [TypeScript](https://www.typescriptlang.org/)
@@ -105,11 +118,11 @@ Questa guida scompone i concetti complessi in articoli semplici e facili da dige
 
 ## Come Eseguire in Locale
 
-### Prerequisiti
+### 📄 Prerequisiti
 
 - [Node.js](https://nodejs.org/) (è raccomandata la versione 18.x o superiore)
 
-### Installazione
+### 💻 Installazione
 
 1.  Clona il repository:
     ```bash
@@ -127,3 +140,44 @@ Questa guida scompone i concetti complessi in articoli semplici e facili da dige
     ```bash
     npm run dev
     ```
+
+---
+
+## 📈 Aggiornamenti Futuri / Future Updates
+
+<p>🇮🇹 Verranno aggiunti periodicamente nuovi argomenti AI.</p>
+<p>🇬🇧 New AI topics will be added periodically.</p>
+
+---
+
+## ❤️ Supporta il Progetto / Support the Project
+
+<p>🇮🇹 Se Core-Foundation-Guide ti è stato utile, considera di supportare il progetto. Ogni contributo aiuta a mantenere il sito attivo e a finanziare lo sviluppo di nuove funzionalità!</p>
+<p>🇬🇧 If you found Core-Foundation-Guide useful, please consider supporting the project. Every contribution helps keep the site running and funds the development of new features!</p>
+
+<p align="center">
+  <a href="https://www.patreon.com/d4N87" target="_blank"><img src="https://img.shields.io/badge/Patreon-d4N87-orange?style=for-the-badge&logo=patreon" alt="Patreon"></a>
+    
+  <a href="https://paypal.me/d4n87?country.x=IT&locale.x=it_IT" target="_blank"><img src="https://img.shields.io/badge/PayPal-Dona-blue?style=for-the-badge&logo=paypal" alt="PayPal"></a>
+</p>
+
+# Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=d4N-87/Core-Foundation-Guide&type=Date)](https://www.star-history.com/#d4N-87/Core-Foundation-Guide&Date)
+
+---
+
+## 📄 Licenza / License
+
+<p>🇮🇹 Questo progetto è rilasciato sotto la Licenza MIT.</p>
+<p>🇬🇧 This project is released under the MIT License.</p>
+
+<!-- Link di Riferimento per i Badge (vanno alla fine del file) -->
+[stars-shield]: https://img.shields.io/github/stars/d4N-87/Core-Foundation-Guide?style=for-the-badge
+[stars-url]: https://github.com/d4N-87/Core-Foundation-Guide/stargazers
+[issues-shield]: https://img.shields.io/github/issues/d4N-87/Core-Foundation-Guide?style=for-the-badge
+[issues-url]: https://github.com/d4N-87/Core-Foundation-Guide/issues
+[license-shield]: https://img.shields.io/github/license/d4N-87/Core-Foundation-Guide?style=for-the-badge
+[license-url]: https://github.com/d4N-87/Core-Foundation-Guide/blob/main/LICENSE
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/in/danielenofi
