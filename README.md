@@ -2,7 +2,7 @@ code
 Markdown
 <div align="center">
   <a href="https://d4n-87.github.io/Core-Foundation-Guide/">
-    <img src="https://d4n-87.github.io/Core-Foundation-Guide/logo.webp" alt="Core Foundation Guide Logo" width="150" height="150">
+    <img src="https://github.com/d4N-87/Core-Foundation-Guide/blob/main/src/lib/assets/logo.web" alt="Core Foundation Guide Logo" width="150" height="150">
   </a>
   <h1>Core Foundation Guide</h1>
   <p>
